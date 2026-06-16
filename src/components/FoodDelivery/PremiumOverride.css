@@ -1,0 +1,275 @@
+/* PremiumOverride.css - Modern redesign for Food Delivery App */
+
+:root {
+  /* Brand Colors */
+  --primary: #ff7a00;
+  --primary-hover: #e86e00;
+  --primary-light: #fff2e5;
+  --success: #22c55e;
+  --success-dark: #15803d;
+  --danger: #ef4444;
+  
+  /* Neutral Colors (Slate) */
+  --bg-main: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --surface-1: #ffffff;
+  --surface-2: rgba(255, 255, 255, 0.85);
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e1;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 12px 30px rgba(255, 122, 0, 0.2);
+
+  /* Transitions */
+  --transition-smooth: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast: all 0.2s ease-in-out;
+  
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+}
+
+/* Global Typography & Background */
+.swiggy-app-container,
+.fd-app {
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  background: var(--bg-main);
+  background-image: radial-gradient(at 0% 0%, rgba(255, 242, 229, 0.5) 0px, transparent 50%),
+                    radial-gradient(at 100% 0%, rgba(241, 245, 249, 0.8) 0px, transparent 50%);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+/* Glassmorphism Header */
+.swiggy-global-header {
+  background: var(--surface-2) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* Search Box Enhancements */
+.swiggy-search-box {
+  background: var(--surface-1) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-light) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 1.2rem 1.5rem !important;
+  transition: var(--transition-smooth) !important;
+}
+
+.swiggy-search-box:focus-within {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow) !important;
+  border-color: var(--primary) !important;
+}
+
+/* Categories & Cards */
+.fd-category-pill {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-smooth);
+  overflow: hidden;
+  background: var(--surface-1);
+}
+
+.fd-category-pill:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+.fd-subcategory-card {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-smooth);
+  background: var(--surface-1);
+}
+
+.fd-subcategory-card:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Restaurant Cards */
+.swiggy-restaurant-card {
+  background: var(--surface-1);
+  border-radius: var(--radius-lg) !important;
+  padding: 0 0 1.2rem 0;
+  box-shadow: var(--shadow-md) !important;
+  border: 1px solid rgba(255,255,255,0.8);
+  transition: var(--transition-smooth) !important;
+  overflow: hidden;
+}
+
+.swiggy-restaurant-card:hover {
+  transform: translateY(-8px) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.swiggy-rest-image-container {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+  margin-bottom: 1.2rem !important;
+}
+
+/* Menu Item Cards (Varieties) */
+.fd-menu-item-card {
+  background: var(--surface-1);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.fd-menu-item-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(255, 122, 0, 0.3);
+}
+
+.fd-menu-item-image-wrapper {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+/* Add to Cart Button */
+.fd-btn-add {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 0.6rem 1.2rem;
+  font-weight: 800;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 12px rgba(255, 122, 0, 0.4);
+  transition: var(--transition-fast);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.fd-btn-add:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 122, 0, 0.5);
+}
+
+.fd-btn-add:active {
+  transform: translateY(0);
+}
+
+/* Portion Selectors */
+.fd-portion-pill {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  padding: 0.4rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.fd-portion-pill.active {
+  background: var(--text-main);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);
+}
+
+/* Floating Cart */
+.fd-floating-cart {
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%) !important;
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 1.2rem 2rem !important;
+  transition: var(--transition-smooth) !important;
+  bottom: 2rem !important;
+  position: fixed !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  max-width: 400px;
+  color: white;
+  cursor: pointer;
+}
+
+.fd-floating-cart:hover {
+  transform: translateX(-50%) translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 15px 40px rgba(34, 197, 94, 0.5) !important;
+}
+
+/* Badges */
+.fd-badge-offer {
+  background: var(--text-main);
+  color: #f59e0b;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.fd-badge-rating {
+  background: var(--success);
+  color: white;
+  padding: 0.1rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+/* Typography Utilities */
+.text-h1 { font-size: 2rem; font-weight: 900; color: var(--text-main); letter-spacing: -0.5px; }
+.text-h2 { font-size: 1.5rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+.text-h3 { font-size: 1.2rem; font-weight: 800; color: var(--text-main); }
+.text-body { font-size: 0.9rem; color: var(--text-secondary); }
+.text-small { font-size: 0.8rem; color: var(--text-tertiary); font-weight: 600; }
+.text-primary { color: var(--primary); }
+
+/* Layout Utilities */
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+.flex-gap-sm { display: flex; gap: 0.5rem; align-items: center; }
+.flex-gap-md { display: flex; gap: 1rem; align-items: center; }
+
+/* Separators */
+.fd-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-light);
+  margin: 1rem 0;
+}
+.fd-divider-thick {
+  width: 100%;
+  height: 3px;
+  background: var(--text-main);
+  margin: 1.5rem 0;
+  border-radius: 2px;
+}

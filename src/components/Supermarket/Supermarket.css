@@ -1,0 +1,605 @@
+/* =============================================
+   FreshMart — Supermarket / Grocery Styles
+   ============================================= */
+
+/* Container */
+.freshmart-app-container {
+  background: #f4faeb;
+  min-height: 100vh;
+}
+
+/* ========== HEADER ========== */
+.freshmart-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 0;
+}
+
+.freshmart-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.freshmart-logo-area {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.freshmart-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.freshmart-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.delivery-badge {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.fresh-badge {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* ========== HERO BANNER ========== */
+.freshmart-hero {
+  background: linear-gradient(rgba(17, 24, 39, 0.75), rgba(17, 24, 39, 0.85)),
+              url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1920');
+  background-size: cover;
+  background-position: center;
+  padding: 4rem 1rem;
+  color: white;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 1.25rem;
+  backdrop-filter: blur(4px);
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0 0 0.75rem 0;
+}
+
+.text-green {
+  color: #4ade80;
+}
+
+.hero-subtitle {
+  font-size: 1rem;
+  color: #d1d5db;
+  max-width: 550px;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.hero-search {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  padding: 0.85rem 1.25rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 480px;
+}
+
+.hero-search input {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  width: 100%;
+  outline: none;
+}
+
+.hero-search input::placeholder {
+  color: #9ca3af;
+}
+
+/* ========== SECTION LAYOUT ========== */
+.section-padding {
+  padding: 2.5rem 1rem;
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #111827;
+  margin: 0 0 0.35rem 0;
+}
+
+.section-header p {
+  color: #6b7280;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* ========== CATEGORY GRID (Image 3) ========== */
+.freshmart-category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .freshmart-category-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .freshmart-category-grid { grid-template-columns: 1fr; }
+}
+
+.freshmart-category-card {
+  background: var(--white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-light);
+}
+
+.freshmart-category-card:hover {
+  box-shadow: 0 8px 28px rgba(34, 197, 94, 0.12);
+  border-color: #86efac;
+}
+
+.cat-img-wrapper {
+  height: 170px;
+  overflow: hidden;
+}
+
+.cat-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.freshmart-category-card:hover .cat-img-wrapper img {
+  transform: scale(1.06);
+}
+
+.cat-card-footer {
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cat-info-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cat-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.cat-info-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cat-sub-count {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+.cat-arrow {
+  background: #f0fdf4;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.freshmart-category-card:hover .cat-arrow {
+  background: #22c55e;
+}
+
+.freshmart-category-card:hover .cat-arrow svg {
+  color: white !important;
+}
+
+/* ========== SUBCATEGORY VIEW (Image 1) ========== */
+.subcategory-header-area {
+  margin-bottom: 2rem;
+}
+
+.pill-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid #86efac;
+  color: #16a34a;
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.pill-back-btn:hover {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+
+.subcategory-main-title {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 0.35rem 0;
+}
+
+.cat-emoji-large {
+  font-size: 2rem;
+}
+
+.subcategory-subtitle {
+  color: #6b7280;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.subcategory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1000px) {
+  .subcategory-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .subcategory-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.subcategory-card {
+  position: relative;
+  height: 220px;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.subcategory-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.subcategory-card:hover .subcategory-bg-image {
+  transform: scale(1.08);
+}
+
+.subcategory-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 1.25rem;
+}
+
+.subcategory-name {
+  color: white;
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ========== MENU HEADER CARD (New Product Page) ========== */
+.menu-header-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.menu-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.menu-back-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111827;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.menu-back-btn:hover {
+  background: #f3f4f6;
+}
+
+.menu-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.menu-subtitle {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.menu-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.item-count-pill {
+  background: #f3f4f6;
+  color: #4b5563;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* ========== REF PRODUCTS GRID (New Product Card Design) ========== */
+.ref-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.ref-product-card {
+  background: white;
+  border-radius: 24px;
+  padding: 1.25rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.ref-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+
+.ref-product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ref-discount-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #111827;
+  color: #fbbf24;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.ref-favorite-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+
+.ref-favorite-btn:hover {
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.ref-card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ref-brand-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ref-brand-name {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ref-rating-badge {
+  background: #22c55e;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.ref-product-title {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #111827;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.ref-trust-badges {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 1rem;
+}
+
+.trust-badge-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.ref-unit-pills {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.ref-unit-pill {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6b7280;
+  background: #f3f4f6;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ref-unit-pill.active {
+  background: #111827;
+  color: white;
+}
+
+.ref-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+.ref-price-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.ref-current-price {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #111827;
+  line-height: 1;
+}
+
+.ref-old-price {
+  font-size: 0.85rem;
+  color: #ef4444;
+  text-decoration: line-through;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.ref-order-btn {
+  background: #f97316;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 24px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+  transition: all 0.2s ease;
+}
+
+.ref-order-btn:hover {
+  background: #ea580c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+}
