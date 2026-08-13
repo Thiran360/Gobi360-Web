@@ -4,7 +4,7 @@ import {
   HelpCircle, Wrench, ArrowUp, PaintRoller, CircuitBoard, Truck,
   ArrowRight, Star, ChevronLeft, ChevronRight, Briefcase, Sun,
   Hammer, Camera, CheckCircle2, Zap, ShieldCheck, Award,
-  Clock, MapPin, Users, TrendingUp, Play,
+  Clock, MapPin, Users, TrendingUp, Play, Calendar, FileText,
 } from 'lucide-react';
 import { services as allServices } from '../data/servicesData';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
@@ -13,23 +13,32 @@ import acImg from '../assets/ac_service.png';
 import electricalImg from '../assets/electrical.png';
 import cleaningImg from '../assets/cleaning.png';
 import paintingImg from '../assets/painting.png';
-import { useNavigate } from 'react-router-dom';
+import meetingImg from '../assets/office_meeting_clapping.png';
+import homeVideo from '../assets/home_video.mp4';
+import hero1 from '../assets/hero1.jpeg';
+import hero2 from '../assets/hero2.jpeg';
+import hero3 from '../assets/hero3.jpeg';
+import hero4 from '../assets/hero4.png';
+import hero5 from '../assets/hero5.png';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useShop } from '../context/ShopContext';
+import GalleryAnimation from '../components/ui/gallery-animation';
 
 /* ─── Design tokens ─────────────────────────────── */
 const T = {
-  blue:      '#3b82f6',
-  blueDark:  '#1d4ed8',
-  blueGlow:  'rgba(59,130,246,0.18)',
-  indigo:    '#6366f1',
-  orange:    '#f97316',
-  dark:      '#0f172a',
-  darkMid:   '#1e293b',
-  slate:     '#475569',
-  muted:     '#94a3b8',
-  border:    '#e2e8f0',
-  bg:        '#f8fafc',
-  white:     '#ffffff',
+  blue: '#3b82f6',
+  blueDark: '#1d4ed8',
+  blueGlow: 'rgba(59,130,246,0.18)',
+  indigo: '#6366f1',
+  orange: '#f97316',
+  dark: '#0f172a',
+  darkMid: '#1e293b',
+  slate: '#475569',
+  muted: '#64748b',
+  border: '#e2e8f0',
+  bg: '#f8fafc',
+  white: '#ffffff',
 };
 
 /* ─── Framer variants ────────────────────────────── */
@@ -85,25 +94,287 @@ const AnimCounter = ({ to, suffix = '', duration = 1600 }) => {
   }, [started, to, duration]);
   return <span ref={ref}>{count}{suffix}</span>;
 };
+const leftSliderImages = [
+  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80", // food
+  "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80", // grocery
+  "https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=600&q=80", // fruits
+  "https://images.unsplash.com/photo-1599598425947-33002570deab?w=600&q=80", // nuts
+];
+const rightSliderImages = [
+  "https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?w=600&q=80", // vegetables
+  "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&q=80", // sports
+  "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=600&q=80", // stationary
+  "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=600&q=80", // wood
+];
+
+const heroSliderItems = [
+  {
+    id: 1,
+    label: 'PREMIUM CONSTRUCTION',
+    title: 'Build Your Dream Space.',
+    desc: 'From planning to execution, we bring your architectural visions to life with top-tier construction professionals.',
+    btn: 'Explore Builders',
+    image: hero3
+  },
+  {
+    id: 2,
+    label: 'IT & SOFTWARE SOLUTIONS',
+    title: 'Transform Your Digital Future.',
+    desc: 'Cutting-edge IT services, software development, and tech support to scale your business to new heights.',
+    btn: 'Hire Tech Experts',
+    image: hero4
+  },
+  {
+    id: 3,
+    label: 'FRESH GROCERIES',
+    title: 'Farm Fresh to Your Door.',
+    desc: 'Get the freshest vegetables, fruits, and daily essentials delivered lightning fast to your home.',
+    btn: 'Shop Groceries',
+    image: hero1
+  },
+  {
+    id: 4,
+    label: 'GOURMET FOOD DELIVERY',
+    title: 'Cravings Satisfied Instantly.',
+    desc: 'Discover top-rated restaurants and enjoy mouth-watering meals delivered hot and fresh anywhere.',
+    btn: 'Order Food',
+    image: hero2
+  },
+  {
+    id: 5,
+    label: 'LUXURY EVENTS',
+    title: 'Unforgettable Wedding Moments.',
+    desc: 'Premium event management and wedding planners to make your special day truly magical.',
+    btn: 'Plan Your Event',
+    image: hero5
+  },
+];
 
 export default function Home() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { getMyDiscount } = useShop();
   const navigate = useNavigate();
+  const location = useLocation();
+  const myDiscount = getMyDiscount();
   const [selectedService, setSelectedService] = useState(null);
-  const [heroIndex, setHeroIndex] = useState(0);
-  const scrollRef = useRef(null);
+  const heroContainerRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isSm, setIsSm] = useState(window.innerWidth <= 425);
+  const [apiData, setApiData] = useState([]);
+  const [apiCategories, setApiCategories] = useState([]);
+  const [expertCategories, setExpertCategories] = useState([]);
 
   useEffect(() => {
-    const h = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', h);
-    return () => window.removeEventListener('resize', h);
+    if (!location.hash) return;
+    const sectionId = location.hash.replace('#', '');
+    const timer = setTimeout(() => {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [location.pathname, location.hash]);
+
+  /* Tamil names for expert categories fetched from API */
+  const expertCategoryTranslations = {
+    'Constructions & Related Works': 'கட்டுமானம் மற்றும் தொடர்புடைய பணிகள்',
+    'IT Concerns': 'தகவல் தொழில்நுட்பம்',
+    'Hardware & Electronics': 'வன்பொருள் மற்றும் மின்னுலகம்',
+    'Real Estate': 'ரியல் எஸ்டேட்',
+    'Travels': 'பயணம்',
+    'Studio / Printing Works': 'ஸ்டூடியோ / அச்சிடு பணிகள்',
+    'Commercial Services': 'வணிக சேவைகள்',
+    'Vehicle Services': 'வாகன சேவைகள்',
+    'Pharmacy / Lab': 'மருந்தகம் / பரிசோதனை கூடம்',
+    'Wedding / Events Services': 'திருமணம் / நிகழ்வு சேவைகள்',
+    'School / Academy': 'பள்ளி / அகாடமி',
+    'Stationaries': 'எழுதுபொருள் மற்றும் அறிவியல் பொருட்கள்',
+    'Sports': 'விளையாட்டுகள்',
+    'Health Care': 'சுகாதாரம்',
+    'Finance/Insurance': 'நிதி / காப்பீடு',
+    'Puncture': 'பஞ்சர் ஜோட்டி',
+    'Organics /Herbals': 'இயற்கை / மூலிகை பொருட்கள்',
+    'Fasion / Clothing': 'ஃபேஷன் / ஆடைகள்',
+    'Emergency Services': 'அவசர சேவைகள்',
+    'Learning / Training': 'கல்வி / பயிற்சி',
+    'Animals / Pets': 'விலங்குகள் / செல்லப்பிராணிகள்',
+  };
+  const [ecomCategories, setEcomCategories] = useState([]);
+  const [productCategories, setProductCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [productVariations, setProductVariations] = useState([]);
+  const hasFetched = useRef(false);
+
+  // New state for inline category experts
+  const [selectedCategoryExperts, setSelectedCategoryExperts] = useState(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [selectedProductCategoryId, setSelectedProductCategoryId] = useState(null);
+  const [isCategoryLoading, setIsCategoryLoading] = useState(false);
+
+  const [leftImageIndex, setLeftImageIndex] = useState(0);
+  const [rightImageIndex, setRightImageIndex] = useState(0);
+  const [heroSliderIndex, setHeroSliderIndex] = useState(0);
+
+  useEffect(() => {
+    const leftInterval = setInterval(() => {
+      setLeftImageIndex(prev => (prev + 1) % leftSliderImages.length);
+    }, 2000);
+    const rightInterval = setInterval(() => {
+      setRightImageIndex(prev => (prev + 1) % rightSliderImages.length);
+    }, 2300);
+    const heroInterval = setInterval(() => {
+      setHeroSliderIndex(prev => (prev + 1) % heroSliderItems.length);
+    }, 2500);
+    return () => { clearInterval(leftInterval); clearInterval(rightInterval); clearInterval(heroInterval); };
   }, []);
 
-  const isMobile = windowWidth <= 768;
-  const isSm     = windowWidth <= 425;
+  // New state for inline ecom category shops
+  const [selectedEcomCategoryId, setSelectedEcomCategoryId] = useState(null);
+  const [selectedShopId, setSelectedShopId] = useState(null);
+
+  const handleCategoryClick = (catId) => {
+    if (selectedCategoryId === catId) {
+      setSelectedCategoryId(null); // Toggle off
+      setSelectedCategoryExperts(null);
+      return;
+    }
+    setSelectedCategoryId(catId);
+    setIsCategoryLoading(true);
+    fetch(`https://api.codingboss.in/gobi360/expert-categories/${catId}/experts/`, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    })
+      .then(res => res.json())
+      .then(data => {
+        let apiData = Array.isArray(data) ? data : data.results || [];
+
+        let staticIds = [];
+        if (catId === 1) {
+          staticIds = ['skyline-builders', 'woodzone', 'monoj-steels', 'sri-jayam-glass-house'];
+        } else if (catId === 2) {
+          staticIds = ['thiran360ai'];
+        } else if (catId === 3) {
+          staticIds = ['sri-ganagathara-agency', 'sri-maha-ganapathi-electricals', 'sun-power', 'sri-sakthi-electrical'];
+        } else if (catId === 6) {
+          staticIds = ['sri-abirami-book-binding', 'majestic-studio'];
+        } else if (catId === 8) {
+          staticIds = ['saaral-motors'];
+        } else if (catId === 11) {
+          staticIds = ['hindi-academy'];
+        } else if (catId === 12) {
+          staticIds = ['sri-abirami-book-binding'];
+        }
+
+        if (staticIds.length > 0) {
+          const staticExperts = allServices
+            .filter(s => staticIds.includes(s.id))
+            .map(s => ({
+              id: s.id,
+              expert_name: s.company || s.person,
+              category: s.tag || 'Expert',
+              expert_image: s.image,
+              contact_number: s.phone,
+              isStatic: true
+            }));
+
+          if (catId === 2) {
+            apiData = [...staticExperts, ...apiData];
+          } else {
+            apiData = [...apiData, ...staticExperts];
+          }
+        }
+
+        setSelectedCategoryExperts(apiData);
+        setIsCategoryLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setIsCategoryLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
+    fetch('https://api.codingboss.in/gobi360/experts/', {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    })
+      .then(res => res.json())
+      .then(data => setApiData(Array.isArray(data) ? data : data.results || []))
+      .catch(err => console.error(err));
+
+    fetch('https://api.codingboss.in/gobi360/categories/', {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    })
+      .then(res => res.json())
+      .then(data => setApiCategories(Array.isArray(data) ? data : data.results || []))
+      .catch(err => console.error(err));
+
+    fetch('https://api.codingboss.in/gobi360/expert-categories/', {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    })
+      .then(res => res.json())
+      .then(data => setExpertCategories(Array.isArray(data) ? data : data.results || []))
+      .catch(err => console.error(err));
+
+    fetch('https://api.codingboss.in/gobi360/shops/', {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    })
+      .then(res => res.json())
+      .then(data => setEcomCategories(Array.isArray(data) ? data : data.results || []))
+      .catch(err => console.error(err));
+
+    fetch('https://api.codingboss.in/gobi360/product-categories/', {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    })
+      .then(res => res.json())
+      .then(data => setProductCategories(Array.isArray(data) ? data : data.results || []))
+      .catch(err => console.error(err));
+
+    fetch('https://api.codingboss.in/gobi360/products/', {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    })
+      .then(res => res.json())
+      .then(data => setProducts(Array.isArray(data) ? data : data.results || []))
+      .catch(err => console.error(err));
+
+    fetch('https://api.codingboss.in/gobi360/product-variations/', {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    })
+      .then(res => res.json())
+      .then(data => setProductVariations(Array.isArray(data) ? data : data.results || []))
+      .catch(err => console.error(err));
+  }, []);
+
+  useEffect(() => {
+    let timeoutId = null;
+    const h = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setIsMobile(window.innerWidth <= 768);
+        setIsSm(window.innerWidth <= 425);
+      }, 150);
+    };
+    window.addEventListener('resize', h);
+    return () => {
+      window.removeEventListener('resize', h);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, []);
 
   const updateScrollBtns = () => {
     const el = scrollRef.current;
@@ -115,8 +386,8 @@ export default function Home() {
 
   /* service icons */
   const iconMap = { Smartphone, Cpu, Code2, Grid3X3, Layout, Building2, Cctv, HelpCircle, Wrench, ArrowUp, PaintRoller, CircuitBoard, Truck, Briefcase, Sun, Hammer, Camera, Star };
-  const pastelBg  = ['#FEE2E2','#E0F2FE','#FDE68A','#DBEAFE','#F9A8D4','#FCD34D','#C7D2FE','#A7F3D0','#FFE4E1','#F0FFF0'];
-  const accentClr = ['#ef4444','#3b82f6','#f59e0b','#6366f1','#ec4899','#f97316','#8b5cf6','#10b981','#f43f5e','#22c55e'];
+  const pastelBg = ['#FEE2E2', '#E0F2FE', '#FDE68A', '#DBEAFE', '#F9A8D4', '#FCD34D', '#C7D2FE', '#A7F3D0', '#FFE4E1', '#F0FFF0'];
+  const accentClr = ['#ef4444', '#3b82f6', '#f59e0b', '#6366f1', '#ec4899', '#f97316', '#8b5cf6', '#10b981', '#f43f5e', '#22c55e'];
 
   const getIcon = (company, i) => {
     const l = company.toLowerCase();
@@ -141,42 +412,56 @@ export default function Home() {
     return Object.values(iconMap)[i % Object.values(iconMap).length];
   };
 
-  const services = allServices.map((s, i) => ({
+  const apiServices = apiData.map(e => ({
+    id: `api-${e.id}`,
+    company: e.expert_name,
+    companyTa: e.expert_name,
+    phone: e.contact_number,
+    isApi: true
+  }));
+
+  const mappedCategories = apiCategories.map(c => ({
+    id: `api-cat-${c.id}`,
+    company: c.name,
+    companyTa: c.name,
+    desc: 'Explore services in this category.',
+    descTa: 'இந்தப் பிரிவில் உள்ள சேவைகளை ஆராயுங்கள்.',
+    image: c.image_url,
+    accent: '#10b981',
+    tag: 'CATEGORY',
+    tagTa: 'பிரிவு',
+    isApiCategory: true
+  }));
+
+  const mergedServices = [...allServices, ...apiServices, ...mappedCategories];
+
+  const services = mergedServices.map((s, i) => ({
     name: t(s.company, s.companyTa), icon: getIcon(s.company, i),
     bg: pastelBg[i % pastelBg.length], color: accentClr[i % accentClr.length], id: s.id,
   }));
 
-  const slides = [
-    { title: t('Plumbing Service','பிளம்பிங் சேவை'), sub: t('Verified Experts','சரிபார்க்கப்பட்ட நிபுணர்கள்'), img: plumberImg, btn: t('Book Now','முன்பதிவு') },
-    { title: t('AC Service','ஏசி சேவை'), sub: t('Expert Cooling','நிபுணர் குளிரூட்டல்'), img: acImg, btn: t('Explore','ஆராயுங்கள்') },
-    { title: t('Electrical Setup','மின்சார அமைப்பு'), sub: t('Certified Wiring','சான்றளிக்கப்பட்ட வயரிங்'), img: electricalImg, btn: t('Get Quote','விலைப்புள்ளி') },
-    { title: t('Home Cleaning','வீடு சுத்தம்'), sub: t('Deep Sanitization','ஆழமான சுத்திகரிப்பு'), img: cleaningImg, btn: t('Order','ஆர்டர்') },
-    { title: t('Wall Painting','சுவர் பெயிண்டிங்'), sub: t('Premium Finish','பிரீமியம் பினிஷ்'), img: paintingImg, btn: t('Consult','ஆலோசனை') },
-  ];
+  // Removed slides array as requested
 
-  useEffect(() => {
-    const t = setInterval(() => setHeroIndex(p => (p + 1) % slides.length), 5000);
-    return () => clearInterval(t);
-  }, [slides.length]);
+
 
   const stats = [
-    { val: 10000, suffix: '+', label: t('Happy Users','மகிழ்ச்சியான பயனர்கள்') },
-    { val: 500,   suffix: '+', label: t('Partners','பங்காளிகள்') },
-    { val: 98,    suffix: '%', label: t('Satisfaction','திருப்தி') },
-    { val: 50,    suffix: '+', label: t('Cities','நகரங்கள்') },
+    { val: 10000, suffix: '+', label: t('Happy Users', 'மகிழ்ச்சியான பயனர்கள்') },
+    { val: 500, suffix: '+', label: t('Partners', 'பங்காளிகள்') },
+    { val: 98, suffix: '%', label: t('Satisfaction', 'திருப்தி') },
+    { val: 50, suffix: '+', label: t('Cities', 'நகரங்கள்') },
   ];
 
   const whyUs = [
-    { Icon: ShieldCheck, title: t('Verified Experts','சரிபார்க்கப்பட்ட நிபுணர்கள்'), desc: t('Every professional is background-checked and skill-verified.','ஒவ்வொரு நிபுணரும் பின்னணி சரிபார்க்கப்பட்டு திறன் உறுதி செய்யப்படுகிறது.'), accent: '#3b82f6', bg: '#eff6ff' },
-    { Icon: Zap,         title: t('Fast Booking','விரைவான முன்பதிவு'), desc: t('Book a service in under 2 minutes with instant confirmation.','2 நிமிடங்களுக்குள் சேவையை முன்பதிவு செய்யுங்கள்.'), accent: '#f97316', bg: '#fff7ed' },
-    { Icon: CheckCircle2,title: t('Transparent Pricing','வெளிப்படையான விலை'), desc: t('No hidden charges. Full cost visible before you book.','மறைமுக கட்டணங்கள் இல்லை. முன்பதிவுக்கு முன் முழு விலை தெரியும்.'), accent: '#22c55e', bg: '#f0fdf4' },
-    { Icon: Award,       title: t('5-Star Quality','5-நட்சத்திர தரம்'), desc: t('Our 4.9/5 rating shows our commitment to excellence.','எங்களின் 4.9/5 மதிப்பீடு சிறப்புக்கான அர்ப்பணிப்பை காட்டுகிறது.'), accent: '#ec4899', bg: '#fdf2f8' },
+    { Icon: ShieldCheck, title: t('Verified Experts', 'சரிபார்க்கப்பட்ட நிபுணர்கள்'), desc: t('Every professional is background-checked and skill-verified.', 'ஒவ்வொரு நிபுணரும் பின்னணி சரிபார்க்கப்பட்டு திறன் உறுதி செய்யப்படுகிறது.'), accent: '#3b82f6', bg: '#eff6ff' },
+    { Icon: Zap, title: t('Fast Booking', 'விரைவான முன்பதிவு'), desc: t('Book a service in under 2 minutes with instant confirmation.', '2 நிமிடங்களுக்குள் சேவையை முன்பதிவு செய்யுங்கள்.'), accent: '#f97316', bg: '#fff7ed' },
+    { Icon: CheckCircle2, title: t('Transparent Pricing', 'வெளிப்படையான விலை'), desc: t('No hidden charges. Full cost visible before you book.', 'மறைமுக கட்டணங்கள் இல்லை. முன்பதிவுக்கு முன் முழு விலை தெரியும்.'), accent: '#22c55e', bg: '#f0fdf4' },
+    { Icon: Award, title: t('5-Star Quality', '5-நட்சத்திர தரம்'), desc: t('Our 4.9/5 rating shows our commitment to excellence.', 'எங்களின் 4.9/5 மதிப்பீடு சிறப்புக்கான அர்ப்பணிப்பை காட்டுகிறது.'), accent: '#ec4899', bg: '#fdf2f8' },
   ];
 
   const steps = [
-    { num: '01', emoji: '🔍', title: t('Browse Services','சேவைகளைத் தேடுங்கள்'), desc: t('Explore our wide range of professional services.','எங்கள் விரிவான தொழில்முறை சேவைகளை ஆராயுங்கள்.') },
-    { num: '02', emoji: '📅', title: t('Book an Expert','நிபுணரை முன்பதிவு செய்யுங்கள்'), desc: t('Schedule at your convenience. Experts come to you.','உங்கள் வசதிக்கேற்ப திட்டமிடுங்கள். நிபுணர்கள் வருவார்கள்.') },
-    { num: '03', emoji: '✅', title: t('Get It Done','வேலையை முடியுங்கள்'), desc: t('Sit back while our verified professionals excel.','சரிபார்க்கப்பட்ட நிபுணர்கள் சிறப்பாக செய்கிறார்கள்.') },
+    { num: '01', emoji: '🔍', title: t('Browse Services', 'சேவைகளைத் தேடுங்கள்'), desc: t('Explore our wide range of professional services.', 'எங்கள் விரிவான தொழில்முறை சேவைகளை ஆராயுங்கள்.') },
+    { num: '02', emoji: '📅', title: t('Book an Expert', 'நிபுணரை முன்பதிவு செய்யுங்கள்'), desc: t('Schedule at your convenience. Experts come to you.', 'உங்கள் வசதிக்கேற்ப திட்டமிடுங்கள். நிபுணர்கள் வருவார்கள்.') },
+    { num: '03', emoji: '✅', title: t('Get It Done', 'வேலையை முடியுங்கள்'), desc: t('Sit back while our verified professionals excel.', 'சரிபார்க்கப்பட்ட நிபுணர்கள் சிறப்பாக செய்கிறார்கள்.') },
   ];
 
   /* ─── Button styles ──────────────────────────────── */
@@ -204,216 +489,575 @@ export default function Home() {
      RENDER
   ──────────────────────────────────────────────────── */
   return (
-    <main style={{ background: T.white, overflowX: 'hidden' }}>
+    <main style={{ background: T.white, overflowX: 'clip' }}>
+
+      {/* Customer Discount Banner */}
+      <AnimatePresence>
+        {myDiscount > 0 && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', padding: '1rem', textAlign: 'center', fontWeight: 700, fontSize: '1.1rem', zIndex: 100, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}
+          >
+            <Award size={24} color="#fcd34d" />
+            Special Offer: You have a {myDiscount}% discount on your next order!
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ══════════════════════════════════════════════════
-          § 1  HERO
+          § 1 HERO (Video on Mobile, Slider on Desktop)
       ══════════════════════════════════════════════════ */}
-      <section style={{
-        position: 'relative', minHeight: '92vh',
-        display: 'flex', alignItems: 'center',
-        padding: isMobile ? '6rem 0 4rem' : '6rem 0 5rem',
-        overflow: 'hidden',
-      }}>
-        {/* Background */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-          <img
-            src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=2069&auto=format&fit=crop"
-            alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-          {/* layered overlays */}
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(110deg,rgba(255,255,255,0.98) 0%,rgba(239,246,255,0.95) 42%,rgba(219,234,254,0.55) 75%,transparent 100%)' }} />
-          {/* decorative blobs */}
-          <div style={{ position: 'absolute', top: '-15%', right: '8%', width: 560, height: 560, borderRadius: '50%', background: 'radial-gradient(circle, rgba(59,130,246,0.13) 0%,transparent 68%)', filter: 'blur(30px)' }} />
-          <div style={{ position: 'absolute', bottom: '-10%', left: '-5%', width: 420, height: 420, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.10) 0%,transparent 70%)', filter: 'blur(50px)' }} />
-        </div>
-
-        <div className="container" style={{
-          position: 'relative', zIndex: 1,
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1.1fr 1fr',
-          gap: isMobile ? '3rem' : '5rem',
-          alignItems: 'center',
-        }}>
-          {/* ── Left copy ── */}
-          <motion.div variants={stagger} initial="initial" animate="animate" style={{ textAlign: isMobile ? 'center' : 'left' }}>
-            <motion.div variants={childFade}>
-              <Pill>{t('Premium Home Services', 'பிரீமியம் வீட்டு சேவைகள்')}</Pill>
-            </motion.div>
-
-            <motion.h1
-              variants={childFade}
-              style={{
-                fontSize: isSm ? '2.1rem' : isMobile ? '2.6rem' : '3.6rem',
-                fontWeight: 900, letterSpacing: '-2.5px', lineHeight: 1.12,
-                color: T.dark, margin: '1.25rem 0 1.25rem',
-              }}
-            >
-              {t('Your Home, Our', 'உங்கள் வீடு,')}
-              {' '}
-              <span style={{
-                background: `linear-gradient(135deg, ${T.blue}, ${T.indigo})`,
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-              }}>
-                {t('Expertise.', 'எங்கள் நிபுணர்கள்.')}
-              </span>
-            </motion.h1>
-
-            <motion.p variants={childFade} style={{
-              fontSize: '1.05rem', color: T.slate, lineHeight: 1.8,
-              maxWidth: isMobile ? '100%' : 470,
-              margin: isMobile ? '0 auto 2rem' : '0 0 2rem',
+      {isMobile ? (
+        <section style={{ width: '100%', position: 'relative', overflow: 'hidden', backgroundColor: '#000000' }}>
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{
+              width: '100%',
+              height: 'auto',
+              display: 'block',
+              objectFit: 'contain'
+            }}
+          >
+            <source src="https://gobi360.in/images/Videos/home%20video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </section>
+      ) : (
+        <section style={{ width: '100%', aspectRatio: '21/9', background: '#f8fafc' }}>
+          <GalleryAnimation items={heroSliderItems} isMobile={isMobile} />
+        </section>
+      )}
+      {/* ══════════════════════════════════════════════════
+          § 1.5 WELCOME INTRO
+      ══════════════════════════════════════════════════ */}
+      <section id="about" style={{ padding: isMobile ? '3rem 1.5rem' : '4rem 2rem', background: T.white, textAlign: 'center' }}>
+        <div className="container" style={{ margin: '0 auto' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 style={{
+              fontSize: isMobile ? '1.6rem' : '3rem',
+              fontWeight: 800,
+              color: '#333333',
+              marginBottom: '1.25rem',
+              letterSpacing: '-0.5px',
+              whiteSpace: 'nowrap'
             }}>
-              {t(
-                'Discover top-tier verified professionals for every home service need. Fast booking, transparent pricing, and guaranteed satisfaction.',
-                'வீட்டு சேவைத் தேவைகளுக்கு சரிபார்க்கப்பட்ட நிபுணர்களைக் கண்டறியவும். விரைவான முன்பதிவு, வெளிப்படையான விலை மற்றும் திருப்தி உத்தரவாதம்.'
-              )}
-            </motion.p>
-
-            {/* CTAs */}
-            <motion.div variants={childFade} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.875rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-              <button
-                style={primaryBtn}
-                onClick={() => navigate('/services')}
-                onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 16px 36px ${T.blueGlow}`; }}
-                onMouseOut={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = `0 8px 24px ${T.blueGlow}`; }}
-              >
-                {t('Explore Services', 'சேவைகளை ஆராயுங்கள்')} <ArrowRight size={17} />
-              </button>
-              <button
-                style={ghostBtn}
-                onClick={() => navigate('/experts')}
-                onMouseOver={e => { e.currentTarget.style.borderColor = T.blue; e.currentTarget.style.color = T.blue; e.currentTarget.style.transform = 'translateY(-3px)'; }}
-                onMouseOut={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.dark; e.currentTarget.style.transform = ''; }}
-              >
-                <Users size={17} /> {t('Meet Experts', 'நிபுணர்களை சந்தியுங்கள்')}
-              </button>
-            </motion.div>
-
-            {/* Trust strip */}
-            <motion.div variants={childFade} style={{
-              display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap',
-              justifyContent: isMobile ? 'center' : 'flex-start',
-              marginTop: '2rem',
+              {t('Welcome To Gobi360', 'கோபி360 க்கு வரவேற்கிறோம்')}
+            </h1>
+            <p style={{
+              fontSize: isMobile ? '0.95rem' : '1.15rem',
+              color: '#555555',
+              lineHeight: isMobile ? 1.6 : 1.85,
+              fontWeight: 400,
+              margin: 0,
+              maxWidth: isMobile ? '98%' : '100%',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              textAlign: 'justify'
             }}>
-              {/* Avatars */}
-              <div style={{ display: 'flex' }}>
-                {['#3b82f6','#6366f1','#f97316','#22c55e'].map((c, i) => (
-                  <div key={i} style={{
-                    width: 34, height: 34, borderRadius: '50%',
-                    background: `linear-gradient(135deg,${c}cc,${c})`,
-                    border: '2px solid white', marginLeft: i ? -10 : 0,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'white', fontSize: '0.7rem', fontWeight: 800,
-                  }}>
-                    {['K','R','A','M'][i]}
-                  </div>
-                ))}
-              </div>
-              <div>
-                <div style={{ display: 'flex', gap: 2 }}>
-                  {[1,2,3,4,5].map(s => <Star key={s} size={13} fill="#f97316" color="#f97316" />)}
-                </div>
-                <p style={{ fontSize: '0.78rem', color: T.slate, fontWeight: 700, marginTop: 2 }}>
-                  {t('Trusted by 10,000+ users', '10,000+ பயனர்களால் நம்பப்படுகிறது')}
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* ── Right image card ── */}
-          <motion.div {...fadeUp(0.12)} style={{ position: 'relative', height: isSm ? 320 : 480 }}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={heroIndex}
-                initial={{ opacity: 0, scale: 0.96, y: 16 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96, y: -16 }}
-                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                style={{
-                  position: 'absolute', inset: 0,
-                  borderRadius: 28, overflow: 'hidden',
-                  boxShadow: '0 40px 80px rgba(15,23,42,0.2)',
-                  border: '6px solid rgba(255,255,255,0.9)',
-                }}
-              >
-                <img src={slides[heroIndex].img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,23,42,0.55) 0%, transparent 55%)' }} />
-
-                {/* Glass card at bottom */}
-                <div style={{
-                  position: 'absolute', bottom: '1.25rem', left: '1.25rem', right: '1.25rem',
-                  background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(16px)',
-                  WebkitBackdropFilter: 'blur(16px)',
-                  padding: '1rem 1.25rem', borderRadius: 18,
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid rgba(255,255,255,0.7)',
-                }}>
-                  <div>
-                    <p style={{ fontWeight: 900, color: T.dark, fontSize: '0.95rem', marginBottom: 2 }}>{slides[heroIndex].title}</p>
-                    <p style={{ fontSize: '0.75rem', color: T.blue, fontWeight: 700 }}>{slides[heroIndex].sub}</p>
-                  </div>
-                  <button style={{ background: `linear-gradient(135deg,${T.blue},${T.indigo})`, color: T.white, padding: '0.5rem 1.1rem', borderRadius: 10, fontWeight: 800, fontSize: '0.82rem', border: 'none', cursor: 'pointer', boxShadow: `0 4px 14px ${T.blueGlow}` }}>
-                    {slides[heroIndex].btn}
-                  </button>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Dots */}
-            <div style={{ position: 'absolute', bottom: '-28px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6 }}>
-              {slides.map((_, i) => (
-                <button key={i} onClick={() => setHeroIndex(i)} style={{ width: heroIndex === i ? 24 : 7, height: 7, borderRadius: 999, background: heroIndex === i ? T.blue : T.border, border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.3s ease' }} />
-              ))}
-            </div>
-
-            {/* Floating badge – top-right */}
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-              style={{
-                position: 'absolute', top: -18, right: isMobile ? -8 : -24,
-                background: T.white, borderRadius: 16, padding: '0.65rem 1rem',
-                boxShadow: '0 12px 32px rgba(15,23,42,0.14)',
-                display: 'flex', alignItems: 'center', gap: 8,
-                border: `1px solid ${T.border}`,
-              }}
-            >
-              <span style={{ fontSize: '1.3rem' }}>🛡️</span>
-              <div>
-                <p style={{ fontSize: '0.68rem', fontWeight: 900, color: T.dark, lineHeight: 1.2 }}>100% Verified</p>
-                <p style={{ fontSize: '0.6rem', color: T.muted, fontWeight: 600 }}>{t('Professionals', 'நிபுணர்கள்')}</p>
-              </div>
-            </motion.div>
-
-            {/* Floating badge – bottom-left */}
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-              style={{
-                position: 'absolute', bottom: 90, left: isMobile ? -8 : -28,
-                background: T.white, borderRadius: 16, padding: '0.65rem 1rem',
-                boxShadow: '0 12px 32px rgba(15,23,42,0.14)',
-                display: 'flex', alignItems: 'center', gap: 8,
-                border: `1px solid ${T.border}`,
-              }}
-            >
-              <div style={{ width: 34, height: 34, borderRadius: 10, background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Clock size={17} color="#22c55e" />
-              </div>
-              <div>
-                <p style={{ fontSize: '0.68rem', fontWeight: 900, color: T.dark }}>30-min Response</p>
-                <p style={{ fontSize: '0.6rem', color: T.muted, fontWeight: 600 }}>{t('Guaranteed', 'உத்தரவாதம்')}</p>
-              </div>
-            </motion.div>
+              {isMobile
+                ? t(
+                  "Gobi360 is your trusted multi-service platform for all home and commercial needs. From expert AC repair to home maintenance, we connect you with highly skilled professionals to deliver reliable solutions directly to your doorstep.",
+                  "கோபி360 அனைத்து வீட்டு மற்றும் வணிக தேவைகளுக்கான உங்கள் நம்பகமான பல சேவை தளமாகும். ஏசி பழுதுபார்ப்பு முதல் வீட்டை பராமரிப்பது வரை, உங்கள் வீட்டு வாசலில் நம்பகமான தீர்வுகளை வழங்க மிகவும் திறமையான நிபுணர்களுடன் உங்களை இணைக்கிறோம்."
+                )
+                : t(
+                  "Established to redefine convenience, Gobi360 is your trusted multi-service platform for all home and commercial needs. From expert AC repair and electrical work to comprehensive home appliance maintenance, we connect you with highly skilled, background-checked professionals. Guided by a philosophy of excellence and customer satisfaction, we deliver reliable, safe, and sustainable solutions directly to your doorstep. Operating with a commitment to quality, we ensure that every service meets the highest standards.",
+                  "வசதியை மறுவரையறை செய்வதற்காக நிறுவப்பட்ட கோபி360, அனைத்து வீட்டு மற்றும் வணிக தேவைகளுக்கான உங்கள் நம்பகமான பல சேவை தளமாகும். நிபுணத்துவம் வாய்ந்த ஏசி பழுதுபார்ப்பு மற்றும் மின் வேலைகள் முதல் விரிவான வீட்டு உபயோகப் பொருட்கள் பராமரிப்பு வரை, மிகவும் திறமையான, பின்னணி சரிபார்க்கப்பட்ட நிபுணர்களுடன் உங்களை இணைக்கிறோம். சிறந்த சேவை மற்றும் வாடிக்கையாளர் திருப்தி என்ற தத்துவத்தால் வழிநடத்தப்பட்டு, உங்கள் வீட்டு வாசலில் நம்பகமான, பாதுகாப்பான மற்றும் நிலையான தீர்வுகளை வழங்குகிறோம். தரத்தில் அர்ப்பணிப்புடன் செயல்படுவதன் மூலம், ஒவ்வொரு சேவையும் மிக உயர்ந்த தரத்தை பூர்த்தி செய்வதை உறுதி செய்கிறோம்."
+                )
+              }
+            </p>
           </motion.div>
         </div>
       </section>
 
+
+
       {/* ══════════════════════════════════════════════════
-          § 2  STATS BAR
+          § 3 EXPERT CATEGORIES
       ══════════════════════════════════════════════════ */}
-      <section style={{ background: T.dark, padding: '3rem 0' }}>
+      <section style={{ padding: isMobile ? '3rem 0' : '5rem 0', background: T.white }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: isMobile ? '2rem' : '3rem' }}>
+            <Pill>{t('Services', 'சேவைகள்')}</Pill>
+            <h2 style={{ fontSize: isMobile ? '1.9rem' : '2.6rem', fontWeight: 900, color: T.dark, letterSpacing: '-1.5px', margin: '0.75rem 0 0.5rem' }}>
+              {t('Explore Services', 'சேவைகளை ஆராயுங்கள்')}
+            </h2>
+            <p style={{ color: T.muted, fontSize: '1rem', maxWidth: 480, margin: '0 auto' }}>
+              {t('Find exactly what you need from our wide range of services.', 'எங்கள் பல்வேறு சேவைகளில் இருந்து உங்களுக்குத் தேவையானதை சரியாகக் கண்டறியவும்.')}
+            </p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(auto-fill, minmax(140px, 1fr))',
+            gap: isMobile ? '0.5rem' : '1.5rem',
+            justifyContent: 'center'
+          }}>
+            {expertCategories
+              .filter(cat => selectedCategoryId ? cat.id === selectedCategoryId : true)
+              .map((cat, i) => (
+                <React.Fragment key={cat.id}>
+                  <motion.div
+                    key={cat.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.05 }}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    onClick={() => handleCategoryClick(cat.id)}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      textAlign: 'center'
+                    }}
+                  >
+                    <div style={{
+                      position: 'relative',
+                      width: '100%',
+                      maxWidth: isMobile ? '90px' : '140px',
+                      margin: '0 auto 1rem auto',
+                      aspectRatio: '1 / 1',
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      boxShadow: '0 10px 30px rgba(15,23,42,0.1)',
+                      border: '4px solid #ffffff'
+                    }}>
+                      <img
+                        src={cat.category_image || cat.image}
+                        alt={cat.category_name || cat.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80' }}
+                      />
+                      {/* Subtle inner shadow overlay to make it look premium */}
+                      <div style={{
+                        position: 'absolute',
+                        inset: 0,
+                        boxShadow: 'inset 0 0 20px rgba(0,0,0,0.05)',
+                        pointerEvents: 'none'
+                      }} />
+                    </div>
+                    <h3 style={{
+                      color: T.slate,
+                      fontSize: isMobile ? '0.6rem' : '0.8rem',
+                      fontWeight: 600,
+                      lineHeight: 1.4,
+                      margin: 0,
+                      padding: isMobile ? '0' : '0 0.5rem',
+                      letterSpacing: isMobile ? '0.5px' : '1px',
+                      textTransform: 'uppercase',
+                      wordBreak: 'break-word'
+                    }}>
+                      {language === 'ta'
+                        ? (cat.category_name_ta || cat.name_ta || expertCategoryTranslations[cat.category_name?.trim()] || expertCategoryTranslations[cat.name?.trim()] || cat.category_name || cat.name)
+                        : (cat.category_name || cat.name)}
+                    </h3>
+                  </motion.div>
+
+                  {/* Inline Experts Display right below the clicked category */}
+                  <AnimatePresence>
+                    {selectedCategoryId === cat.id && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                        animate={{ opacity: 1, height: 'auto', marginTop: '1rem' }}
+                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                        style={{
+                          gridColumn: '1 / -1',
+                          padding: isMobile ? '1.5rem' : '2rem',
+                          background: '#f8fafc',
+                          borderRadius: 24,
+                          border: '1px solid #e2e8f0',
+                          overflow: 'hidden',
+                          marginBottom: '1rem'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                          <h3 style={{ fontSize: isMobile ? '1.2rem' : '1.5rem', fontWeight: 800, color: T.dark, margin: 0 }}>
+                            {language === 'ta'
+                              ? (cat.category_name_ta || expertCategoryTranslations[cat.category_name?.trim()] || cat.category_name || cat.name)
+                              : (cat.category_name || cat.name)}{' '}{t('Experts', 'நிபுணர்கள்')}
+                          </h3>
+                          <button onClick={(e) => { e.stopPropagation(); setSelectedCategoryId(null); setSelectedCategoryExperts(null); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.slate, fontSize: '0.9rem', fontWeight: 600, padding: '0.5rem 1rem', borderRadius: 8, background: 'rgba(0,0,0,0.05)' }}>
+                            {t('Close', 'மூடு')}
+                          </button>
+                        </div>
+
+                        {isCategoryLoading ? (
+                          <div style={{ textAlign: 'center', padding: '3rem 0', color: T.slate, fontSize: '1.1rem', fontWeight: 500 }}>
+                            {t('Loading experts...', 'நிபுணர்களை ஏற்றுகிறது...')}
+                          </div>
+                        ) : selectedCategoryExperts && selectedCategoryExperts.length > 0 ? (
+                          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                            {selectedCategoryExperts.map((expert, j) => (
+                              <motion.div
+                                key={expert.id}
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: j * 0.05 }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (expert.isStatic) {
+                                    navigate(`/services/${expert.id}`);
+                                  } else {
+                                    navigate(`/services/api-${expert.id}`);
+                                  }
+                                }}
+                                style={{
+                                  background: T.white, borderRadius: 20, overflow: 'hidden', cursor: 'pointer',
+                                  border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 8px 24px rgba(15,23,42,0.05)',
+                                  transition: 'all 0.3s ease'
+                                }}
+                                onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 15px 35px rgba(15,23,42,0.1)'; }}
+                                onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(15,23,42,0.05)'; }}
+                              >
+                                <div style={{ height: 180, position: 'relative' }}>
+                                  <img src={expert.expert_image} alt={expert.expert_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                  <div style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'rgba(255,255,255,0.95)', padding: '4px 10px', borderRadius: 12, fontSize: '0.7rem', fontWeight: 700, color: T.darkMid }}>
+                                    {expert.category || 'EXPERT'}
+                                  </div>
+                                </div>
+                                <div style={{ padding: '1.5rem' }}>
+                                  <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: T.dark, margin: '0 0 0.5rem 0' }}>{expert.expert_name}</h4>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: T.slate, fontSize: '0.85rem', fontWeight: 500 }}>
+                                    <Star size={14} fill="#f59e0b" color="#f59e0b" /> 4.9
+                                  </div>
+                                </div>
+                              </motion.div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div style={{ textAlign: 'center', padding: '3rem 0', color: T.slate, fontSize: '1.1rem', fontWeight: 500 }}>
+                            {t('No experts found in this category.', 'இந்த பிரிவில் நிபுணர்கள் யாரும் இல்லை.')}
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </React.Fragment>
+              ))}
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ══════════════════════════════════════════════════
+          § 4 ECOM CATEGORIES
+      ══════════════════════════════════════════════════ */}
+      <section style={{ padding: isMobile ? '3rem 0' : '5rem 0', background: '#f8fafc' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: isMobile ? '2rem' : '3rem' }}>
+            <Pill color={T.orange}>{t('Ecom Categories', 'ஈகாம் பிரிவுகள்')}</Pill>
+            <h2 style={{ fontSize: isMobile ? '1.9rem' : '2.6rem', fontWeight: 900, color: T.dark, letterSpacing: '-1.5px', margin: '0.75rem 0 0.5rem' }}>
+              {t('Explore E-commerce', 'இ-காமர்ஸ் ஆராயுங்கள்')}
+            </h2>
+            <p style={{ color: T.muted, fontSize: '1rem', maxWidth: 480, margin: '0 auto' }}>
+              {t('Find top shops and products easily.', 'சிறந்த கடைகள் மற்றும் தயாரிப்புகளை எளிதாகக் கண்டறியவும்.')}
+            </p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(auto-fill, minmax(140px, 1fr))',
+            gap: isMobile ? '0.5rem' : '1.5rem',
+            justifyContent: 'center'
+          }}>
+            {apiCategories.map((cat, i) => (
+              <motion.div
+                key={`ecom-${cat.id}`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                onClick={() => navigate(`/services/api-cat-${cat.id}`)}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  textAlign: 'center'
+                }}
+              >
+                <div style={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: isMobile ? '90px' : '140px',
+                  margin: '0 auto 1rem auto',
+                  aspectRatio: '1 / 1',
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  boxShadow: '0 10px 30px rgba(15,23,42,0.1)',
+                  border: '4px solid #ffffff'
+                }}>
+                  <img
+                    src={cat.shop_image || cat.image_url}
+                    alt={cat.shop_name || cat.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80' }}
+                  />
+                  {/* Subtle inner shadow overlay to make it look premium */}
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    boxShadow: 'inset 0 0 20px rgba(0,0,0,0.05)',
+                    pointerEvents: 'none'
+                  }} />
+                </div>
+                <h3 style={{
+                  color: T.slate,
+                  fontSize: isMobile ? '0.6rem' : '0.8rem',
+                  fontWeight: 600,
+                  lineHeight: 1.4,
+                  margin: 0,
+                  padding: isMobile ? '0' : '0 0.5rem',
+                  letterSpacing: isMobile ? '0.5px' : '1px',
+                  textTransform: 'uppercase',
+                  wordBreak: 'break-word'
+                }}>
+                  {cat.shop_name || cat.name}
+                </h3>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Inline Shops Display below the categories grid */}
+          <AnimatePresence>
+            {selectedEcomCategoryId && (
+              <motion.div
+                initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                animate={{ opacity: 1, height: 'auto', marginTop: '2rem' }}
+                exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                style={{
+                  padding: isMobile ? '1.5rem' : '2rem',
+                  background: '#f8fafc',
+                  borderRadius: 24,
+                  border: '1px solid #e2e8f0',
+                  overflow: 'hidden',
+                  marginBottom: '1rem'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                  <h3 style={{ fontSize: isMobile ? '1.2rem' : '1.5rem', fontWeight: 800, color: T.dark, margin: 0 }}>
+                    {apiCategories.find(c => c.id === selectedEcomCategoryId)?.name} {t('Shops', 'கடைகள்')}
+                  </h3>
+                  <button onClick={(e) => { e.stopPropagation(); setSelectedEcomCategoryId(null); setSelectedShopId(null); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.slate, fontSize: '0.9rem', fontWeight: 600, padding: '0.5rem 1rem', borderRadius: 8, background: 'rgba(0,0,0,0.05)' }}>
+                    {t('Close', 'மூடு')}
+                  </button>
+                </div>
+
+                <div className="hide-scrollbar" style={{
+                  display: 'flex',
+                  overflowX: 'auto',
+                  gap: '1rem',
+                  paddingBottom: '1rem',
+                  scrollSnapType: 'x mandatory',
+                  WebkitOverflowScrolling: 'touch'
+                }}>
+                  {ecomCategories.filter(shop => shop.category === selectedEcomCategoryId).length > 0 ? (
+                    ecomCategories.filter(shop => shop.category === selectedEcomCategoryId).map((shop, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => {
+                          setSelectedShopId(selectedShopId === shop.id ? null : shop.id);
+                          setSelectedProductCategoryId(null);
+                        }}
+                        style={{
+                          cursor: 'pointer',
+                          background: T.white,
+                          borderRadius: 24,
+                          padding: '1.5rem',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          border: `2px solid ${selectedShopId === shop.id ? '#1e293b' : 'transparent'}`,
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                          minWidth: '160px',
+                          scrollSnapAlign: 'start',
+                          flexShrink: 0
+                        }}
+                      >
+                        <div style={{ width: 100, height: 100, borderRadius: '50%', overflow: 'hidden', marginBottom: '1rem', flexShrink: 0, boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
+                          <img src={shop.shop_image} alt={shop.shop_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80' }} />
+                        </div>
+                        <h4 style={{ margin: 0, color: '#1e293b', fontWeight: 800, fontSize: '0.9rem', textAlign: 'center', lineHeight: 1.3 }}>{shop.shop_name}</h4>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ width: '100%', textAlign: 'center', padding: '2rem', color: T.muted, fontSize: '0.9rem' }}>
+                      {t('No shops available in this category.', 'இந்த பிரிவில் கடைகள் எதுவும் இல்லை.')}
+                    </div>
+                  )}
+                </div>
+
+                {/* Product Categories for selected shop */}
+                <AnimatePresence>
+                  {selectedShopId && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      style={{ overflow: 'hidden', marginTop: '1.5rem' }}
+                    >
+                      <div style={{ borderLeft: '4px solid #3b82f6', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+                        <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#1e293b', margin: 0 }}>
+                          Refine within {ecomCategories.find(s => s.id === selectedShopId)?.shop_name}
+                        </h3>
+                      </div>
+
+                      <div className="hide-scrollbar" style={{
+                        display: 'flex',
+                        overflowX: 'auto',
+                        gap: '1rem',
+                        scrollSnapType: 'x mandatory',
+                        paddingBottom: '1rem',
+                        WebkitOverflowScrolling: 'touch'
+                      }}>
+                        {productCategories.filter(p => p.shop === selectedShopId).length > 0 ? (
+                          productCategories.filter(p => p.shop === selectedShopId).map((pCat, pIdx) => (
+                            <div
+                              key={pIdx}
+                              style={{
+                                cursor: 'pointer',
+                                background: T.white,
+                                borderRadius: 24,
+                                padding: '1.5rem',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                border: `2px solid ${selectedProductCategoryId === pCat.id ? '#1e293b' : 'transparent'}`,
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                minWidth: '160px',
+                                scrollSnapAlign: 'start',
+                                flexShrink: 0
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedProductCategoryId(selectedProductCategoryId === pCat.id ? null : pCat.id);
+                              }}
+                            >
+                              <div style={{ width: 100, height: 100, borderRadius: '50%', overflow: 'hidden', marginBottom: '1rem', flexShrink: 0, boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
+                                <img src={pCat.image_url} alt={pCat.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80' }} />
+                              </div>
+                              <h4 style={{ margin: 0, color: '#1e293b', fontWeight: 800, fontSize: '0.85rem', textAlign: 'center', textTransform: 'uppercase', lineHeight: 1.3 }}>{pCat.name}</h4>
+                            </div>
+                          ))
+                        ) : (
+                          <p style={{ fontSize: '0.8rem', color: T.muted, width: '100%', textAlign: 'center', margin: 0 }}>No product categories found.</p>
+                        )}
+                      </div>
+
+                      {/* Products Grid */}
+                      <AnimatePresence>
+                        {selectedProductCategoryId && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            style={{ overflow: 'hidden', marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0' }}
+                          >
+                            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#1e293b', marginBottom: '1.5rem' }}>
+                              {productCategories.find(p => p.id === selectedProductCategoryId)?.name} {t('Products', 'தயாரிப்புகள்')}
+                            </h3>
+                            {products.filter(pr => pr.product_category === selectedProductCategoryId).length > 0 ? (
+                              <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(280px, 1fr))',
+                                gap: '1.5rem',
+                              }}>
+                                {products.filter(pr => pr.product_category === selectedProductCategoryId).map((prod, pIdx) => (
+                                  <div
+                                    key={pIdx}
+                                    style={{
+                                      background: T.white,
+                                      borderRadius: 20,
+                                      overflow: 'hidden',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      border: '1px solid rgba(0,0,0,0.03)',
+                                      boxShadow: '0 10px 30px -10px rgba(15,23,42,0.06)'
+                                    }}
+                                  >
+                                    <div style={{ height: 180, position: 'relative', overflow: 'hidden' }}>
+                                      <img
+                                        src={prod.image_url}
+                                        alt={prod.name}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80' }}
+                                      />
+                                    </div>
+                                    <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                      <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: T.dark, marginBottom: '0.5rem' }}>
+                                        {prod.name}
+                                      </h3>
+                                      <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1rem' }}>
+                                        {prod.description || 'Premium quality product'}
+                                      </p>
+
+                                      <div style={{ flex: 1 }}>
+                                        {/* Display Variations */}
+                                        {productVariations.filter(v => v.product === prod.id).length > 0 && (
+                                          <div style={{ marginBottom: '1rem' }}>
+                                            <select
+                                              style={{
+                                                width: '100%',
+                                                padding: '0.5rem',
+                                                borderRadius: 8,
+                                                border: '1px solid #cbd5e1',
+                                                background: '#f8fafc',
+                                                fontSize: '0.9rem',
+                                                color: '#334155',
+                                                outline: 'none',
+                                                cursor: 'pointer'
+                                              }}
+                                            >
+                                              {productVariations.filter(v => v.product === prod.id).map(v => (
+                                                <option key={v.id} value={v.id}>
+                                                  {v.variation_value} - ₹{v.price}
+                                                </option>
+                                              ))}
+                                            </select>
+                                          </div>
+                                        )}
+                                      </div>
+
+                                      <button style={{
+                                        background: T.blue, color: T.white, border: 'none', padding: '0.6rem 1rem', borderRadius: 8, fontWeight: 700, cursor: 'pointer', marginTop: 'auto'
+                                      }}>
+                                        {t('View Product', 'தயாரிப்பைப் பார்க்கவும்')}
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p style={{ color: T.muted, textAlign: 'center', padding: '2rem' }}>No products available in this category.</p>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════
+          STATS BAR (Moved below Explore E-commerce)
+      ══════════════════════════════════════════════════ */}
+      <section style={{ background: '#0f172a', padding: '4.5rem 0', borderTop: '1px solid #1e293b' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: '2rem' }}>
             {stats.map(({ val, suffix, label }, i) => (
@@ -426,147 +1070,21 @@ export default function Home() {
                 style={{ textAlign: 'center' }}
               >
                 <p style={{
-                  fontSize: isMobile ? '2rem' : '2.6rem', fontWeight: 900,
-                  background: `linear-gradient(135deg,${T.blue},${T.indigo})`,
+                  fontSize: isMobile ? '2.2rem' : '3rem', fontWeight: 900,
+                  background: 'linear-gradient(135deg, #ffffff, #cbd5e1)',
                   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                  lineHeight: 1, letterSpacing: '-2px',
+                  lineHeight: 1, letterSpacing: '-1px',
+                  textShadow: '0 10px 30px rgba(255,255,255,0.05)',
+                  margin: '0 0 0.8rem 0'
                 }}>
                   <AnimCounter to={val} suffix={suffix} />
                 </p>
-                <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.55)', fontWeight: 700, marginTop: 6, textTransform: 'uppercase', letterSpacing: '1px' }}>{label}</p>
+                <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px' }}>
+                  {label}
+                </p>
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════
-          § 3  SERVICES SCROLL
-      ══════════════════════════════════════════════════ */}
-      <section style={{ padding: '5rem 0', background: T.white }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
-          <div>
-            <Pill>{t('What We Offer', 'நாங்கள் வழங்குவது')}</Pill>
-            <h2 style={{ fontSize: isMobile ? '1.7rem' : '2.2rem', fontWeight: 900, color: T.dark, letterSpacing: '-1.5px', margin: '0.75rem 0 0.4rem' }}>
-              {t('Explore Services', 'சேவைகளை ஆராயுங்கள்')}
-            </h2>
-            <p style={{ color: T.muted, fontSize: '0.95rem' }}>
-              {t('Find the right expert for your exact need', 'உங்கள் தேவைக்கு சரியான நிபுணரைக் கண்டறியவும்')}
-            </p>
-          </div>
-          <div style={{ display: 'flex', gap: '0.6rem' }}>
-            {[{ dir: -1, active: canScrollLeft }, { dir: 1, active: canScrollRight }].map(({ dir, active }, i) => (
-              <button
-                key={i}
-                onClick={() => scrollSvc(dir)}
-                disabled={!active}
-                style={{
-                  width: 44, height: 44, borderRadius: '50%',
-                  background: active ? (dir === 1 ? `linear-gradient(135deg,${T.blue},${T.indigo})` : T.dark) : T.bg,
-                  color: active ? T.white : T.muted,
-                  border: `1.5px solid ${active ? 'transparent' : T.border}`,
-                  boxShadow: active ? '0 6px 16px rgba(59,130,246,0.28)' : 'none',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: active ? 'pointer' : 'default', transition: 'all 0.22s ease',
-                }}
-              >
-                {dir === -1 ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div
-          ref={scrollRef} onScroll={updateScrollBtns}
-          className="hide-scrollbar"
-          style={{ display: 'flex', gap: '1.25rem', overflowX: 'auto', padding: isMobile ? '0.5rem 1rem 1.5rem' : '0.5rem 4rem 1.5rem' }}
-        >
-          {services.map((s, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ y: -8, scale: 1.05 }}
-              whileTap={{ scale: 0.96 }}
-              onClick={() => setSelectedService(s)}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', flexShrink: 0, width: 100, textAlign: 'center' }}
-            >
-              <div style={{
-                width: 74, height: 74, borderRadius: 24,
-                background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: `0 6px 20px ${s.color}22`, border: `1.5px solid ${s.color}18`,
-                transition: 'all 0.25s',
-              }}>
-                <s.icon size={30} color={s.color} />
-              </div>
-              <span style={{ fontSize: '0.74rem', fontWeight: 800, color: T.darkMid, lineHeight: 1.3 }}>{s.name}</span>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════
-          § 4  FOOD DELIVERY BANNER
-      ══════════════════════════════════════════════════ */}
-      <section style={{ padding: '3rem 0', background: T.bg }}>
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              position: 'relative', borderRadius: 28, overflow: 'hidden',
-              background: 'linear-gradient(130deg,#0f172a 0%,#1e293b 55%,#1a3a6b 100%)',
-              display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center',
-              boxShadow: '0 32px 64px rgba(15,23,42,0.22)',
-            }}
-          >
-            {/* Glow blobs */}
-            <div style={{ position: 'absolute', top: '-60px', right: '28%', width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle,rgba(249,115,22,0.18) 0%,transparent 68%)' }} />
-            <div style={{ position: 'absolute', bottom: '-60px', left: '15%', width: 260, height: 260, borderRadius: '50%', background: 'radial-gradient(circle,rgba(99,102,241,0.14) 0%,transparent 70%)' }} />
-
-            <div style={{ flex: 1, padding: isMobile ? '3rem 2rem' : '4.5rem 4.5rem', zIndex: 1 }}>
-              <span style={{
-                display: 'inline-block', background: 'rgba(249,115,22,0.15)', color: '#f97316',
-                padding: '5px 14px', borderRadius: 999, fontWeight: 800, fontSize: '0.72rem',
-                textTransform: 'uppercase', letterSpacing: '1.8px',
-                border: '1px solid rgba(249,115,22,0.28)', marginBottom: '1.25rem',
-              }}>
-                {t('Food Delivery', 'உணவு விநியோகம்')}
-              </span>
-              <h2 style={{ fontSize: isMobile ? '2rem' : '2.9rem', fontWeight: 900, color: T.white, lineHeight: 1.18, letterSpacing: '-1.5px', marginBottom: '1rem' }}>
-                {t('Hungry?', 'பசியாக உள்ளதா?')}
-                {' '}
-                <span style={{ color: '#f97316' }}>{t("We've got you.", 'நாங்கள் இருக்கிறோம்.')}</span>
-              </h2>
-              <p style={{ color: '#94a3b8', fontSize: '1rem', lineHeight: 1.8, maxWidth: 420, marginBottom: '2.5rem' }}>
-                {t('Explore top restaurants, discover delicious meals, and get them delivered hot and fresh.', 'சிறந்த உணவகங்களை ஆராயுங்கள், சுவையான உணவுகளைக் கண்டறியுங்கள்.')}
-              </p>
-              <button
-                onClick={() => navigate('/services/food-delivery-express')}
-                style={{
-                  background: 'linear-gradient(135deg,#f97316,#fb923c)',
-                  color: T.white, border: 'none',
-                  padding: '1rem 2.25rem', borderRadius: 14,
-                  fontSize: '1rem', fontWeight: 800, cursor: 'pointer',
-                  display: 'inline-flex', alignItems: 'center', gap: 8,
-                  boxShadow: '0 10px 28px rgba(249,115,22,0.42)',
-                  transition: 'all 0.25s ease',
-                }}
-                onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 18px 40px rgba(249,115,22,0.52)'; }}
-                onMouseOut={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 10px 28px rgba(249,115,22,0.42)'; }}
-              >
-                {t('Order Food Now', 'இப்போது உணவு ஆர்டர் செய்யுங்கள்')} <ArrowRight size={19} />
-              </button>
-            </div>
-
-            <div style={{ flex: 1, height: isMobile ? 240 : '100%', minHeight: isMobile ? 'auto' : 420, position: 'relative', width: '100%' }}>
-              <img
-                src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop"
-                alt="Food" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
-              />
-              <div style={{ position: 'absolute', inset: 0, background: isMobile ? 'linear-gradient(to top,#0f172a,transparent 60%)' : 'linear-gradient(to right,#1e293b,transparent 52%)' }} />
-            </div>
-          </motion.div>
         </div>
       </section>
 
@@ -608,55 +1126,44 @@ export default function Home() {
                   style={{
                     background: T.white,
                     borderRadius: 24,
-                    padding: '0',
-                    border: `1.5px solid ${T.border}`,
-                    boxShadow: '0 6px 28px rgba(15,23,42,0.07)',
-                    transition: 'all 0.3s ease',
+                    padding: '2.5rem 2rem',
+                    border: `1.5px solid #3b82f6`,
+                    boxShadow: `0 12px 40px -10px ${accent}15, 0 4px 12px rgba(15,23,42,0.03)`,
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                     cursor: 'default',
-                    overflow: 'hidden',
                     position: 'relative',
                     zIndex: 1,
                   }}
                   onMouseOver={e => {
-                    e.currentTarget.style.borderColor = accent + '60';
-                    e.currentTarget.style.boxShadow = `0 20px 50px ${accent}25`;
+                    e.currentTarget.style.borderColor = '#2563eb'; // Darker blue on hover
+                    e.currentTarget.style.boxShadow = `0 24px 60px -15px ${accent}35, 0 8px 24px ${accent}20`;
+                    e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
                   }}
                   onMouseOut={e => {
-                    e.currentTarget.style.borderColor = T.border;
-                    e.currentTarget.style.boxShadow = '0 6px 28px rgba(15,23,42,0.07)';
+                    e.currentTarget.style.borderColor = '#3b82f6';
+                    e.currentTarget.style.boxShadow = `0 12px 40px -10px ${accent}15, 0 4px 12px rgba(15,23,42,0.03)`;
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
                   }}
                 >
-                  {/* Colored top strip */}
-                  <div style={{ height: 6, background: `linear-gradient(90deg, ${accent}, ${accent}99)` }} />
-
-                  <div style={{ padding: '1.875rem' }}>
+                  <div style={{ textAlign: 'center' }}>
                     {/* Emoji with glowing background */}
                     <div style={{
-                      width: 60, height: 60, borderRadius: 18,
-                      background: cardBg,
-                      border: `1.5px solid ${accent}30`,
+                      width: 72, height: 72, borderRadius: 20,
+                      background: `linear-gradient(135deg, ${cardBg} 0%, #ffffff 100%)`,
+                      border: `1px solid ${accent}20`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      marginBottom: '1.25rem',
-                      boxShadow: `0 6px 20px ${accent}20`,
-                      fontSize: '1.8rem',
-                      margin: '0 auto 1.25rem',
+                      boxShadow: `0 8px 24px ${accent}15`,
+                      fontSize: '2.2rem',
+                      margin: '0 auto 1.5rem',
                     }}>
                       {s.emoji}
                     </div>
 
-                    <div style={{ textAlign: 'center' }}>
-                      <span style={{ fontSize: '0.68rem', fontWeight: 900, color: accent, letterSpacing: 2, textTransform: 'uppercase' }}>
-                        {t('STEP', 'படி')} {s.num}
-                      </span>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: T.dark, margin: '0.5rem 0 0.6rem', letterSpacing: '-0.3px' }}>{s.title}</h3>
-                      <p style={{ fontSize: '0.83rem', color: T.muted, lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
-
-                      {/* Bottom accent */}
-                      <div style={{ marginTop: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                        <div style={{ width: 28, height: 3, borderRadius: 99, background: `linear-gradient(90deg, ${accent}, ${accent}66)` }} />
-                        <div style={{ width: 8, height: 3, borderRadius: 99, background: accent + '33' }} />
-                      </div>
-                    </div>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: accent, letterSpacing: 1.5, textTransform: 'uppercase' }}>
+                      {t('STEP', 'படி')} {s.num}
+                    </span>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: T.dark, margin: '0.75rem 0', letterSpacing: '-0.3px' }}>{s.title}</h3>
+                    <p style={{ fontSize: '0.95rem', color: T.slate, lineHeight: 1.6, margin: 0 }}>{s.desc}</p>
                   </div>
                 </motion.div>
               );
@@ -668,7 +1175,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════════
           § 6  WHY CHOOSE US
       ══════════════════════════════════════════════════ */}
-      <section style={{ padding: '6rem 0', background: 'linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%)', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ padding: '2rem 0 6rem', background: 'linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%)', position: 'relative', overflow: 'hidden' }}>
         {/* Decorative background blobs */}
         <div style={{ position: 'absolute', top: '-60px', right: '-40px', width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: '-60px', left: '-40px', width: 380, height: 380, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
@@ -684,59 +1191,64 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4,1fr)', gap: '1.5rem' }}>
-            {whyUs.map(({ Icon, title, desc, accent, bg: cardBg }, i) => (
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4,1fr)', gap: '1.5rem' }}>
+            {whyUs.map(({ Icon, title, desc, accent }, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 36 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.55, delay: i * 0.12 }}
-                whileHover={{ y: -10, scale: 1.03 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                whileHover={{ y: -8 }}
                 style={{
                   background: T.white,
-                  borderRadius: 24,
-                  padding: '0',
-                  border: `1.5px solid ${T.border}`,
-                  boxShadow: '0 6px 28px rgba(15,23,42,0.07)',
-                  transition: 'all 0.3s ease',
+                  borderRadius: 16,
+                  padding: '2rem 1.75rem',
+                  border: `1px solid #e2e8f0`,
+                  boxShadow: '0 4px 12px rgba(15,23,42,0.03)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   cursor: 'default',
+                  position: 'relative',
                   overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
                 onMouseOver={e => {
-                  e.currentTarget.style.borderColor = accent + '60';
-                  e.currentTarget.style.boxShadow = `0 20px 50px ${accent}25`;
+                  e.currentTarget.style.borderColor = accent;
+                  e.currentTarget.style.boxShadow = `0 20px 40px -10px ${accent}25`;
                 }}
                 onMouseOut={e => {
-                  e.currentTarget.style.borderColor = T.border;
-                  e.currentTarget.style.boxShadow = '0 6px 28px rgba(15,23,42,0.07)';
+                  e.currentTarget.style.borderColor = '#e2e8f0';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(15,23,42,0.03)';
                 }}
               >
-                {/* Colored top strip */}
-                <div style={{ height: 6, background: `linear-gradient(90deg, ${accent}, ${accent}99)` }} />
+                {/* Subtle top gradient accent on hover */}
+                <div
+                  className="hover-gradient"
+                  style={{
+                    position: 'absolute', top: 0, left: 0, right: 0, height: 4,
+                    background: `linear-gradient(90deg, ${accent}, ${accent}88)`,
+                    opacity: 0, transition: 'opacity 0.3s ease'
+                  }}
+                />
 
-                <div style={{ padding: '1.875rem' }}>
-                  {/* Icon with glowing background */}
-                  <div style={{
-                    width: 60, height: 60, borderRadius: 18,
-                    background: cardBg,
-                    border: `1.5px solid ${accent}30`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    marginBottom: '1.25rem',
-                    boxShadow: `0 6px 20px ${accent}20`,
-                  }}>
-                    <Icon size={27} color={accent} strokeWidth={2} />
-                  </div>
+                <style>{`
+                  div:hover > .hover-gradient { opacity: 1 !important; }
+                `}</style>
 
-                  <h3 style={{ fontSize: '1rem', fontWeight: 900, color: T.dark, marginBottom: '0.6rem', letterSpacing: '-0.3px' }}>{title}</h3>
-                  <p style={{ fontSize: '0.83rem', color: T.muted, lineHeight: 1.7, margin: 0 }}>{desc}</p>
-
-                  {/* Bottom accent */}
-                  <div style={{ marginTop: '1.25rem', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 28, height: 3, borderRadius: 99, background: `linear-gradient(90deg, ${accent}, ${accent}66)` }} />
-                    <div style={{ width: 8, height: 3, borderRadius: 99, background: accent + '33' }} />
-                  </div>
+                {/* Professional Icon Container */}
+                <div style={{
+                  width: 52, height: 52, borderRadius: 14,
+                  background: `${accent}12`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  marginBottom: '1.5rem',
+                  color: accent
+                }}>
+                  <Icon size={24} strokeWidth={2.5} />
                 </div>
+
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.75rem', letterSpacing: '-0.3px' }}>{title}</h3>
+                <p style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500, lineHeight: 1.6, margin: 0, flex: 1 }}>{desc}</p>
               </motion.div>
             ))}
           </div>
@@ -785,7 +1297,7 @@ export default function Home() {
                     </div>
 
                     {/* Mini cards */}
-                    {[[T.blue,'#eff6ff'],[T.orange,'#fff7ed']].map(([c, bg], j) => (
+                    {[[T.blue, '#eff6ff'], [T.orange, '#fff7ed']].map(([c, bg], j) => (
                       <div key={j} style={{ height: 64, background: T.white, borderRadius: 14, display: 'flex', alignItems: 'center', padding: '0 0.85rem', gap: 10, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
                         <div style={{ width: 34, height: 34, borderRadius: 10, background: bg, flexShrink: 0 }} />
                         <div style={{ flex: 1 }}>
@@ -823,9 +1335,9 @@ export default function Home() {
                 <div style={{ width: 36, height: 36, borderRadius: '50%', background: `linear-gradient(135deg,${T.blue},${T.indigo})`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: T.white, fontSize: '0.75rem', fontWeight: 900 }}>K</div>
                 <div>
                   <div style={{ display: 'flex', gap: 2, marginBottom: 3 }}>
-                    {[1,2,3,4,5].map(s => <Star key={s} size={10} fill="#f97316" color="#f97316" />)}
+                    {[1, 2, 3, 4, 5].map(s => <Star key={s} size={10} fill="#f97316" color="#f97316" />)}
                   </div>
-                  <p style={{ fontSize: '0.68rem', color: T.darkMid, fontWeight: 700 }}>Great service!</p>
+                  <p style={{ fontSize: '0.68rem', color: T.darkMid, fontWeight: 700 }}>{t('Great service!', 'சிறந்த சேவை!')}</p>
                 </div>
               </motion.div>
             </div>
@@ -846,37 +1358,58 @@ export default function Home() {
 
             {/* Feature pills */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '2.25rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-              {[t('Real-time Tracking','நேரடி கண்காணிப்பு'), t('Instant Booking','உடனடி முன்பதிவு'), t('Exclusive Offers','சிறப்பு சலுகைகள்')].map(f => (
+              {[t('Real-time Tracking', 'நேரடி கண்காணிப்பு'), t('Instant Booking', 'உடனடி முன்பதிவு'), t('Exclusive Offers', 'சிறப்பு சலுகைகள்')].map(f => (
                 <span key={f} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.78rem', fontWeight: 700, color: T.blue, background: '#eff6ff', padding: '0.35rem 0.9rem', borderRadius: 999, border: `1px solid ${T.blue}28` }}>
                   <CheckCircle2 size={12} /> {f}
                 </span>
               ))}
             </div>
 
-            <button
-              onClick={() => window.open('https://play.google.com/store/apps/details?id=in.gobi360.app', '_blank')}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 14,
-                background: T.dark, color: T.white,
-                padding: '0.95rem 1.875rem', borderRadius: 16,
-                border: 'none', cursor: 'pointer',
-                boxShadow: '0 12px 28px rgba(15,23,42,0.2)',
-                transition: 'all 0.3s ease',
-              }}
-              onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 22px 44px rgba(15,23,42,0.28)'; }}
-              onMouseOut={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 12px 28px rgba(15,23,42,0.2)'; }}
-            >
-              <svg viewBox="0 0 24 24" width="28" height="28">
-                <path d="M4 2.5C4 2 4.4 1.7 4.9 1.9L20.6 11.1C21.1 11.4 21.1 12.1 20.6 12.4L4.9 21.6C4.4 21.9 4 21.5 4 21V2.5Z" fill="#34A853" />
-                <path d="M4 2.5V21L13.5 11.7L4 2.5Z" fill="#4285F4" />
-                <path d="M4 2.5L13.5 11.7L20.6 12.4L4.9 1.9C4.4 1.7 4 2 4 2.5Z" fill="#EA4335" />
-                <path d="M4 21L13.5 11.7L20.6 11.1L4.9 21.6C4.4 21.9 4 21.5 4 21Z" fill="#FBBC04" />
-              </svg>
-              <div style={{ textAlign: 'left' }}>
-                <div style={{ fontSize: '0.6rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1 }}>{t('GET IT ON', 'இதிலிருந்து பெறவும்')}</div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '-0.5px', marginTop: 1 }}>Google Play</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', justifyContent: isMobile ? 'center' : 'flex-start', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => window.open('https://play.google.com/store/apps/details?id=in.gobi360.app', '_blank')}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 14,
+                  background: T.dark, color: T.white,
+                  padding: '0.95rem 1.875rem', borderRadius: 16,
+                  border: 'none', cursor: 'pointer',
+                  boxShadow: '0 12px 28px rgba(15,23,42,0.2)',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 22px 44px rgba(15,23,42,0.28)'; }}
+                onMouseOut={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 12px 28px rgba(15,23,42,0.2)'; }}
+              >
+                <svg viewBox="0 0 24 24" width="28" height="28">
+                  <path d="M4 2.5C4 2 4.4 1.7 4.9 1.9L20.6 11.1C21.1 11.4 21.1 12.1 20.6 12.4L4.9 21.6C4.4 21.9 4 21.5 4 21V2.5Z" fill="#34A853" />
+                  <path d="M4 2.5V21L13.5 11.7L4 2.5Z" fill="#4285F4" />
+                  <path d="M4 2.5L13.5 11.7L20.6 12.4L4.9 1.9C4.4 1.7 4 2 4 2.5Z" fill="#EA4335" />
+                  <path d="M4 21L13.5 11.7L20.6 11.1L4.9 21.6C4.4 21.9 4 21.5 4 21Z" fill="#FBBC04" />
+                </svg>
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontSize: '0.6rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1 }}>{t('GET IT ON', 'இதிலிருந்து பெறவும்')}</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '-0.5px', marginTop: 1 }}>Google Play</div>
+                </div>
+              </button>
+
+              <div style={{
+                background: '#fff',
+                padding: '0.6rem',
+                borderRadius: '12px',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '0.4rem',
+                border: `1px solid ${T.border}`
+              }}>
+                <img
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://play.google.com/store/apps/details?id=in.gobi360.app"
+                  alt="Gobi360 App QR Code"
+                  style={{ width: 100, height: 100, display: 'block', borderRadius: '4px' }}
+                />
+                <span style={{ fontSize: '0.65rem', fontWeight: 700, color: T.slate, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{t('Scan to Download', 'பதிவிறக்க ஸ்கேன் செய்யவும்')}</span>
               </div>
-            </button>
+            </div>
           </motion.div>
         </div>
       </section>

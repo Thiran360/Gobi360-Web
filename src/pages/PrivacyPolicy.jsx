@@ -227,7 +227,7 @@ const PrivacyPolicy = () => {
               <div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', marginBottom: '0.5rem' }}>Founders:</h3>
                 <p style={{ color: '#475569', margin: 0 }}><strong>Govindaraju D.E.C.E.</strong> – +91 9842743053</p>
-                <p style={{ color: '#475569', margin: 0 }}><strong>Maanickavasagar</strong> – +91 7708805630</p>
+                <p style={{ color: '#475569', margin: 0 }}><strong>Maanicka vasagar</strong> – +91 7708805630</p>
               </div>
             </div>
 

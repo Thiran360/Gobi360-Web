@@ -139,7 +139,7 @@ const RestaurantList = ({ searchQuery = '', onSelectRestaurant }) => {
           <div className="fd-divider-thick"></div>
           
           <div className="flex-gap-md" style={{ marginBottom: '2rem' }}>
-            <h3 className="text-h2">Popular Categories</h3>
+            <h3 className="text-h2">Popular Restaurants / Food</h3>
           </div>
         </div>
         

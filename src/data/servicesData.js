@@ -1,3 +1,4 @@
+import { Trophy, Gamepad2, Users, Link2 } from 'lucide-react';
 import skylineImg from '../assets/svc_skyline.png';
 import baasImg from '../assets/svc_baas.png';
 import hariImg from '../assets/svc_harichandra.png';
@@ -127,6 +128,7 @@ import swathiTractor from '../assets/swathi_tractor.png';
 import swathiEngine from '../assets/swathi_engine.png';
 import swathiParts from '../assets/swathi_parts.png';
 import swathiDelivery from '../assets/swathi_delivery.png';
+import swaraj from '../assets/swaraj.png';
 
 // Fallback/Generic feature images
 import electricalImg from '../assets/electrical.png';
@@ -143,7 +145,7 @@ export const services = [
     companyTa: 'ஸ்கைலைன் பில்டர்ஸ் மற்றும் இன்டீரியர்ஸ்',
     desc: 'Construction and Metal Roofing',
     descTa: 'கட்டுமானம் மற்றும் மெட்டல் ரூபிங்',
-    person: 'saravanakumar',
+    person: 'Saravanakumar',
     phone: '9443822122',
     image: skylineImg,
     accent: '#f97316',
@@ -193,72 +195,7 @@ export const services = [
       }
     ],
   },
-  {
-    id: 'harichandra-projects',
-    company: 'Harichandra Projects',
-    companyTa: 'ஹரிச்சந்திரா ப்ராஜெக்ட்ஸ்',
-    desc: 'Robotics and PCB Solutions',
-    descTa: 'ரோபோட்டிக்ஸ் மற்றும் பிசிபி தீர்வுகள்',
-    person: 'Harichandra',
-    phone: '9489364369',
-    image: hariImg,
-    accent: '#ec4899',
-    tag: 'INNOVATION LAB',
-    tagTa: 'இனோவேஷன் லேப்',
-    features: [
-      {
-        title: 'Custom PCB Design',
-        titleTa: 'தனிப்பயன் PCB வடிவமைப்பு',
-        subLabel: 'R & D Engineering',
-        subLabelTa: 'ஆராய்ச்சி மற்றும் மேம்பாட்டு பொறியியல்',
-        desc: 'Advanceed Printed Circuit Boards tailored for industrial and consumer electronics.',
-        descTa: 'தொழிற்துறை மற்றும் நுகர்வோர் மின்னணு சாதனங்களுக்காக தனிப்பயனாக்கப்பட்ட மேம்பட்ட அச்சிடப்பட்ட சர்க்யூட் போர்டுகள்.',
-        image: hariRobotics,
-        techAnalysis: 'Multi-layer routing with embedded components. Trace impedance matching for high-speed signals.Full DFM check.'
-      },
-      {
-        title: 'robotics prototyping',
-        titleTa: 'ரோபோட்டிக்ஸ் மாதிரி உருவாக்கம்',
-        subLabel: 'R & D Engineering',
-        subLabelTa: 'ஆராய்ச்சி மற்றும் மேம்பாட்டு பொறியியல்',
-        desc: 'Custom automated robotic solotions and mechanical arm assemblies.',
-        descTa: 'தனிப்பயனாக்கப்பட்ட தானியங்கி ரோபோட்டிக் தீர்வுகள் மற்றும் மெக்கானிக்கல் கை அமைப்புகள்.',
-        image: hariPCB,
-        techAnalysis: 'High-precision stepper & servo motor integration. Real time path finding algorithms and object recognition via AI.'
-      },
-      {
-        title: 'IoT Integrations',
-        titleTa: 'பொருட்களின் இணைய ஒருங்கிணைப்பு',
-        subLabel: 'R & D Engineering',
-        subLabelTa: 'ஆராய்ச்சி மற்றும் மேம்பாட்டு பொறியியல்',
-        desc: 'Smart centralized hubs connecting various appliances to the cloud .',
-        descTa: 'பல்வேறு சாதனங்களை கிளவுட் (மேக) சேவையுடன் இணைக்கும் ஸ்மார்ட் மைய கட்டுப்பாட்டு அமைப்புகள்.',
-        image: hariEmbedded,
-        techAnalysis: 'Utilizing MQTT,Zigbee, and LoRaWAN for low latency long-range communication.secure and backend.'
-      },
-      {
-        title: 'Educational STEM kits',
-        titleTa: 'STEM கல்வி கிட்கள்',
-        subLabel: 'R & D Engineering',
-        subLabelTa: 'ஆராய்ச்சி மற்றும் மேம்பாட்டு பொறியியல்',
-        desc: 'DIY Robot components, microcontrollers, and educational assemblies for institutions.',
-        descTa: 'கல்வி நிறுவனங்களுக்கான தானாகச் செய்யக்கூடிய (DIY) ரோபோ பகுதிகள், மைக்ரோகண்ட்ரோலர்கள் மற்றும் கல்வி அமைப்பு கிட்கள்.',
-        image: hariMaintenance,
-        techAnalysis: 'Arduino, Raspberry-pi, and ESP32 Kits pre-loaded with foundational fireware.plug-and-play sensors.'
-      },
-      {
-        title: 'IoT & Electronics Kits Sales',
-        titleTa: 'IoT மற்றும் மின்னணு கிட்கள் விற்பனை',
-        subLabel: 'R & D Engineering',
-        subLabelTa: 'ஆராய்ச்சி மற்றும் மேம்பாட்டு பொறியியல்',
-        desc: 'Premium IoT Modules, Sensors, and customized electronics project kits for students and hobbyistics.',
-        descTa: 'கல்வி நிறுவனங்களுக்கான தானாகச் செய்யக்கூடிய (DIY) ரோபோ பகுதிகள், மைக்ரோகண்ட்ரோலர்கள் மற்றும் கல்வி அமைப்பு கிட்கள்.',
-        image: harikits,
-        techAnalysis: 'Avaliable for direct purchase, includes detailed documentation,source code,and expert technical support.'
-      }
 
-    ],
-  },
   {
     id: 'hindi-academy',
     company: 'Spoken Hindi Academy',
@@ -445,18 +382,18 @@ export const services = [
     phone: '9842943053',
     image: woodzoneImg,
     accent: '#eab308',
-    tag: 'PREMIUM TILES',
-    tagTa: 'பிரீமியம் டைல்ஸ்',
+    tag: 'PREMIUM WOOD',
+    tagTa: 'பிரீமியம் மரம்',
     features: [
       {
-        title: 'Premium Floor Tiles',
-        titleTa: 'உயர்தர தரை டைல்கள்',
+        title: 'Premium Wooden Flooring',
+        titleTa: 'உயர்தர மர தரை அமைப்பு',
         subLabel: 'interior decor',
         subLabelTa: 'உள் அலங்காரம்',
-        desc: 'Elegant and durable flooring solutions for residential and commercial spaces.',
-        descTa: 'குடியிருப்பு மற்றும் வணிக இடங்களுக்கு ஏற்ற அழகான மற்றும் நீடித்த தரை அமைப்பு தீர்வுகள்.',
+        desc: 'Elegant and durable wooden flooring solutions for residential and commercial spaces.',
+        descTa: 'குடியிருப்பு மற்றும் வணிக இடங்களுக்கு ஏற்ற அழகான மற்றும் நீடித்த மர தரை அமைப்பு தீர்வுகள்.',
         image: skyModular,
-        techAnalysis: 'Ceramic,porcelain,vitrified, and Natural Stone.Slip-resident and high-gloss variants available.'
+        techAnalysis: 'Solid hardwood, engineered wood, and premium laminate flooring with scratch resistance.'
       },
       {
         title: 'Custom Furniture',
@@ -469,14 +406,14 @@ export const services = [
         techAnalysis: 'Teak,rosewood,Engineered wood.Includes dining sets,Sofas,beds and decorative stands.'
       },
       {
-        title: 'Wall & Decore Tiles',
-        titleTa: 'சுவர் மற்றும் அலங்கார டைல்கள்',
+        title: 'Wall & Decore Wood',
+        titleTa: 'சுவர் மற்றும் மர அலங்காரம்',
         subLabel: 'interior decor',
         subLabelTa: 'உள் அலங்காரம்',
-        desc: 'Stylish backsplash,bathroom, and exterior elevation tiles.',
-        descTa: 'அழகான சமையலறை பின்புற சுவர், குளியலறை மற்றும் வெளிப்புற அலங்கார டைல்கள்.',
+        desc: 'Stylish wooden wall panels and premium interior wood decor.',
+        descTa: 'அழகான மர சுவர் பேனல்கள் மற்றும் பிரீமியம் மர அலங்கார வேலைப்பாடுகள்.',
         image: furnitureImg,
-        techAnalysis: '3D textures,mosaic,subway tiles and moisture-resistant bathroom ceramics.'
+        techAnalysis: '3D wooden textures, carved wood panels, and moisture-resistant treated wood.'
       },
       {
         title: 'modular Elements',
@@ -492,14 +429,13 @@ export const services = [
   },
 
 
-
   {
     id: 'thiran360ai',
     company: 'THIRAN360AI',
     companyTa: 'திறன்360AI',
     desc: 'IT, Software and App Development',
     descTa: 'IT, மென்பொருள் மற்றும் ஆப் மேம்பாடு',
-    person: 'Manikavasagar',
+    person: 'Maanicka Vasagar',
     phone: '7708805630',
     image: thiranImg,
     accent: '#14b8a6',
@@ -569,6 +505,78 @@ export const services = [
     ],
   },
   {
+    id: 'stgesports',
+    company: 'STG Esports',
+    companyTa: 'STG ஈஸ்போர்ட்ஸ்',
+    desc: 'BGMI Tournaments & Services',
+    descTa: 'BGMI போட்டிகள் மற்றும் சேவைகள்',
+    person: 'STG Team',
+    phone: '8056823309',
+    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
+    accent: '#ef4444',
+    tag: 'ESPORTS',
+    tagTa: 'ஈஸ்போர்ட்ஸ்',
+    features: [
+      {
+        title: 'Tournaments & Leagues',
+        titleTa: 'போட்டிகள் & லீக்ஸ்',
+        subLabel: 'PREMIUM ACCESS',
+        subLabelTa: 'பிரீமியம் அணுகல்',
+        subLabelColor: '#ef4444',
+        icon: Trophy,
+        iconBg: '#eff6ff',
+        iconColor: '#3b82f6',
+        desc: 'Join weekly and monthly BGMI tournaments with massive prize pools and competitive lobbies.',
+        descTa: 'பிரம்மாண்டமான பரிசுத் தொகைகள் மற்றும் போட்டி லாபிகளுடன் வாராந்திர மற்றும் மாதாந்திர BGMI போட்டிகளில் சேரவும்.',
+        image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
+        techTitle: 'GAMEPLAY HIGHLIGHT',
+        techTitleTa: 'விளையாட்டு சிறப்பம்சங்கள்',
+        techIcon: Link2,
+        techColor: '#3b82f6',
+        techBg: '#eff6ff',
+        techAnalysis: 'Professional matchmaking, live streaming, and dedicated spectator support.'
+      },
+      {
+        title: 'Custom Matches',
+        titleTa: 'தனிப்பயன் போட்டிகள்',
+        subLabel: 'PREMIUM ACCESS',
+        subLabelTa: 'பிரீமியம் அணுகல்',
+        subLabelColor: '#ef4444',
+        icon: Gamepad2,
+        iconBg: '#f0fdf4',
+        iconColor: '#22c55e',
+        desc: 'Book custom rooms for practice, scrims, or friendly battles with your squad.',
+        descTa: 'பயிற்சி, ஸ்க்ரிம்ஸ் அல்லது உங்கள் அணியுடனான நட்புரீதியான போர்களுக்காக தனிப்பயன் அறைகளை முன்பதிவு செய்யவும்.',
+        image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80',
+        techTitle: 'GAMEPLAY HIGHLIGHT',
+        techTitleTa: 'விளையாட்டு சிறப்பம்சங்கள்',
+        techIcon: Link2,
+        techColor: '#22c55e',
+        techBg: '#f0fdf4',
+        techAnalysis: 'Instant room ID delivery, strict anti-hack monitoring, and lag-free hosting.'
+      },
+      {
+        title: 'Team Management & Services',
+        titleTa: 'அணி மேலாண்மை & சேவைகள்',
+        subLabel: 'PREMIUM ACCESS',
+        subLabelTa: 'பிரீமியம் அணுகல்',
+        subLabelColor: '#ef4444',
+        icon: Users,
+        iconBg: '#fef2f2',
+        iconColor: '#ef4444',
+        desc: 'Find players, build your esports roster, and get premium coaching for rank push.',
+        descTa: 'வீரர்களைக் கண்டறியவும், உங்கள் ஈஸ்போர்ட்ஸ் பட்டியலை உருவாக்கவும் மற்றும் ரேங்க் புஷ்க்கான பிரீமியம் பயிற்சியைப் பெறவும்.',
+        image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80',
+        techTitle: 'GAMEPLAY HIGHLIGHT',
+        techTitleTa: 'விளையாட்டு சிறப்பம்சங்கள்',
+        techIcon: Link2,
+        techColor: '#ef4444',
+        techBg: '#fef2f2',
+        techAnalysis: 'Connect with tier-1 players and elevate your gaming strategy.'
+      }
+    ],
+  },
+  {
     id: 'saaral-motors',
     company: 'Saaral Motors Swaraj Tractors',
     companyTa: 'சாரல் மோட்டார்ஸ் ஸ்வராஜ் டிராக்டர்கள்',
@@ -598,7 +606,7 @@ export const services = [
         subLabelTa: 'நிபுணர் பராமரிப்பு',
         desc: 'Expert maintenance and repair services by certified technicians.',
         descTa: 'சான்றளிக்கப்பட்ட தொழில்நுட்ப நிபுணர்களால் வழங்கப்படும் நிபுணத்துவ பராமரிப்பு மற்றும் பழுது பார்க்கும் சேவைகள்.',
-        image: swathiEngine,
+        image: swaraj,
         techAnalysis: 'Advanced diagnostic tools and genuine spares.Regular maintenance for long engine life.'
       },
       {
@@ -618,7 +626,7 @@ export const services = [
         subLabelTa: 'நிதி ஆதரவு',
         desc: 'Easy Finishing options and comprehensive Insurance for your new tractor.',
         descTa: 'உங்கள் புதிய டிராக்டருக்கான எளிய நிதி வசதிகள் மற்றும் முழுமையான காப்பீட்டு சேவைகள்.',
-        image: swathiDelivery,
+        image: swaraj,
         techAnalysis: 'Low Interest rates and flexible tenure.instant documentation and hassle-free processing.'
       }
     ],
@@ -739,8 +747,8 @@ export const services = [
   },
   {
     id: 'sun-power',
-    company: 'Sun Power Equipments',
-    companyTa: 'சன் பவர் எக்விப்மென்ட்ஸ்',
+    company: 'Mega Sun Power Equipments',
+    companyTa: 'மெகா சன் பவர் எக்விப்மென்ட்ஸ்',
     desc: 'Solar, UPS & R.O Systems',
     descTa: 'சோலார், யுபிஎஸ் & ஆர்.ஓ சிஸ்டம்ஸ்',
     person: 'JC S.R.S.Prabakaran',
@@ -749,83 +757,80 @@ export const services = [
     accent: '#f59e0b',
     tag: 'Solar & Power',
     tagTa: 'சோலார் & மின்சாரம்',
-    features: [],
-    waterRO: [
+    features: [
       {
-        title: 'Domestic R.O Purifier Sales',
-        titleTa: 'வீட்டு ஆர்.ஓ பியூரிஃபையர் விற்பனை',
-        desc: 'Top-tier household R.O water systems with multi-stage filtration (RO+UV+UF+TDS control).',
-        descTa: 'பல்வேறு கட்ட வடிகட்டுதல் கொண்ட உயர்தர வீட்டு ஆர்.ஓ நீர் அமைப்புகள்.',
-        image: purify, // need to adjust image later if needed
+        title: 'Solar Power Solutions',
+        titleTa: 'சோலார் பவர் தீர்வுகள்',
+        desc: 'Complete solar power systems for residential and commercial setups, offering high efficiency and sustainability.',
+        descTa: 'குடியிருப்பு மற்றும் வணிக அமைப்புகளுக்கான முழுமையான சோலார் பவர் அமைப்புகள், அதிக திறன் மற்றும் நிலைத்தன்மையை வழங்குகின்றன.',
+        image: solarpu,
+        techAnalysis: 'High efficiency solar panels, robust controllers, and zero fuel cost.'
+      },
+      {
+        title: 'Domestic R.O Purifiers',
+        titleTa: 'வீட்டு ஆர்.ஓ பியூரிஃபையர்கள்',
+        desc: 'Advanced multi-stage R.O water purification systems for safe and healthy drinking water at home.',
+        descTa: 'வீட்டில் பாதுகாப்பான மற்றும் ஆரோக்கியமான குடிநீருக்கான மேம்பட்ட பல கட்ட ஆர்.ஓ நீர் சுத்திகரிப்பு அமைப்புகள்.',
+        image: purify,
         techAnalysis: 'Removes 99% impurities, retains essential minerals, and has low water wastage.'
       },
       {
         title: 'Industrial R.O Systems',
         titleTa: 'தொழில்துறை ஆர்.ஓ அமைப்புகள்',
-        desc: 'High capacity water purification systems designed for offices, schools, and commercial establishments.',
-        descTa: 'அலுவலகங்கள், பள்ளிகள் மற்றும் வணிக நிறுவனங்களுக்காக வடிவமைக்கப்பட்ட அதிக திறன் கொண்ட நீர் சுத்திகரிப்பு அமைப்புகள்.',
+        desc: 'High-capacity industrial water purification plants designed for factories, schools, and offices.',
+        descTa: 'தொழிற்சாலைகள், பள்ளிகள் மற்றும் அலுவலகங்களுக்காக வடிவமைக்கப்பட்ட அதிக திறன் கொண்ட தொழில்துறை நீர் சுத்திகரிப்பு நிலையங்கள்.',
         image: indu,
-        techAnalysis: 'Custom scale design, fully automatic operations, and robust stainless-steel build.'
+        techAnalysis: 'Custom scale design, fully automatic operations, and robust build.'
+      },
+      {
+        title: 'UPS & Batteries',
+        titleTa: 'யுபிஎஸ் & பேட்டரிகள்',
+        desc: 'Reliable UPS systems and long-lasting batteries for uninterrupted power supply in all environments.',
+        descTa: 'அனைத்து சூழல்களிலும் தடையற்ற மின் விநியோகத்திற்கான நம்பகமான யுபிஎஸ் அமைப்புகள் மற்றும் நீண்ட கால பேட்டரிகள்.',
+        image: battery,
+        techAnalysis: 'Pure sine wave output, fast charging, and overload protection.'
+      },
+      {
+        title: 'Servo Stabilizers',
+        titleTa: 'சர்வோ ஸ்டெபிலைசர்கள்',
+        desc: 'Precision voltage stabilization systems to protect your sensitive equipment from voltage fluctuations.',
+        descTa: 'மின்னழுத்த ஏற்ற இறக்கங்களிலிருந்து உங்கள் உணர்திறன் கருவிகளைப் பாதுகாக்க துல்லியமான மின்னழுத்த நிலைப்படுத்தல் அமைப்புகள்.',
+        image: stab,
+        techAnalysis: 'Micro-controller based design, high-speed correction, and short circuit protection.'
+      },
+      {
+        title: 'CCTV Systems',
+        titleTa: 'சிசிடிவி அமைப்புகள்',
+        desc: 'Advanced security camera systems and surveillance solutions for continuous monitoring and safety.',
+        descTa: 'தொடர்ச்சியான கண்காணிப்பு மற்றும் பாதுகாப்பிற்கான மேம்பட்ட பாதுகாப்பு கேமரா அமைப்புகள் மற்றும் கண்காணிப்பு தீர்வுகள்.',
+        image: grid,
+        techAnalysis: 'High-resolution imaging, night vision, and remote mobile viewing capabilities.'
+      },
+      {
+        title: 'Water Softners',
+        titleTa: 'நீர் மென்மையாக்கிகள்',
+        desc: 'Effective water softening systems to treat hard water, protecting pipes and improving water quality.',
+        descTa: 'கடின நீரை சுத்திகரிப்பதற்கும், குழாய்களைப் பாதுகாப்பதற்கும், நீரின் தரத்தை மேம்படுத்துவதற்கும் பயனுள்ள நீர் மென்மையாக்கும் அமைப்புகள்.',
+        image: solarli,
+        techAnalysis: 'High-capacity ion exchange resin, automatic regeneration, and compact design.'
       },
       {
         title: 'Maintenance & Services',
         titleTa: 'பராமரிப்பு மற்றும் சேவைகள்',
-        desc: 'Timely filter replacements, membrane cleaning, and emergency repair services for all brands.',
-        descTa: 'அனைத்து பிராண்டுகளுக்கும் சரியான நேரத்தில் ஃபில்டர் மாற்றுதல், மெம்பிரேன் சுத்தம் செய்தல் மற்றும் அவசர பழுதுபார்க்கும் சேவைகள்.',
+        desc: 'Expert repair, maintenance, and AMC services for R.O systems, solar products, and power backups.',
+        descTa: 'ஆர்.ஓ அமைப்புகள், சோலார் பொருட்கள் மற்றும் பவர் பேக்கப்களுக்கான நிபுணத்துவ பழுதுபார்ப்பு, பராமரிப்பு மற்றும் ஏஎம்சி சேவைகள்.',
         image: main,
-        techAnalysis: 'Prompt service, original spare parts, and annual maintenance contracts (AMC) available.'
-      }
-    ],
-    solarPower: [
-      {
-        title: 'Solar Water Pumps',
-        titleTa: 'சோலார் நீர் பம்புகள்',
-        desc: 'Eco-friendly solar powered water pumping systems for agricultural and domestic irrigation.',
-        descTa: 'விவசாய மற்றும் வீட்டு நீர்ப்பாசனத்திற்கான சுற்றுச்சூழல் நட்பு சோலார் இயங்கும் நீர் பம்பிங் அமைப்புகள்.',
-        image: solarpu,
-        techAnalysis: 'High efficiency solar controllers, zero fuel cost, low maintenance, and weather resistant.'
-      },
-      {
-        title: 'Solar Street Lights',
-        titleTa: 'சோலார் தெரு விளக்குகள்',
-        desc: 'Automatic solar street lighting solutions for residential communities, pathways, and commercial spaces.',
-        descTa: 'குடியிருப்புப் பகுதிகள், பாதைகள் மற்றும் வணிக இடங்களுக்கான தானியங்கி சோலார் தெரு விளக்கு தீர்வுகள்.',
-        image: solarli,
-        techAnalysis: 'Dusk to dawn operation, motion sensor integration, and high luminosity LED modules.'
-      },
-      {
-        title: 'On Grid & Off Grid Systems',
-        titleTa: 'ஆன் கிரிட் மற்றும் ஆஃப் கிரிட் அமைப்புகள்',
-        desc: 'Customized solar rooftop installations to significantly reduce electricity bills and ensure power independence.',
-        descTa: 'மின்சார கட்டணங்களைக் கணிசமாகக் குறைக்கவும், மின்சார சுதந்திரத்தை உறுதிப்படுத்தவும் தனிப்பயனாக்கப்பட்ட சோலார் மேற்கூரை நிறுவல்கள்.',
-        image: grid,
-        techAnalysis: 'Net metering support, high-conversion mono PERC panels, and hybrid inverter configurations.'
-      },
-      {
-        title: 'UPS & Battery Backup',
-        titleTa: 'யுபிஎஸ் மற்றும் பேட்டரி பேக்கப்',
-        desc: 'Reliable UPS and tall tubular battery setups for uninterrupted power supply in homes and offices.',
-        descTa: 'வீடுகள் மற்றும் அலுவலகங்களில் தடையற்ற மின் விநியோகத்திற்கான நம்பகமான யுபிஎஸ் மற்றும் பேட்டரி அமைப்புகள்.',
-        image: battery,
-        techAnalysis: 'Pure sine wave output, overload protection, and fast charging capabilities.'
-      },
-      {
-        title: 'Servo Stabilizer',
-        titleTa: 'சர்வோ ஸ்டெபிலைசர்',
-        desc: 'Precision voltage stabilization systems to protect sensitive electronics and heavy machinery from fluctuations.',
-        descTa: 'ஏற்ற இறக்கங்களிலிருந்து உணர்திறன் எலக்ட்ரானிக்ஸ் மற்றும் கனரக இயந்திரங்களைப் பாதுகாக்க துல்லியமான மின்னழுத்த நிலைப்படுத்தல் அமைப்புகள்.',
-        image: stab,
-        techAnalysis: 'High-speed correction, micro-controller based design, and short circuit protection.'
+        techAnalysis: 'Prompt service, trained technicians, and original spare parts guaranteed.'
       }
     ]
   },
   {
-    id: 'monoj-steels',
-    company: 'Monoj Steels',
+    id: 'manoj-steels',
+    company: 'Manoj Steels',
     companyTa: 'மனோஜ் ஸ்டீல்ஸ்',
     desc: 'Cement, TMT Bars & Building Blocks',
     descTa: 'சிமெண்ட், டிஎம்டி கம்பிகள் & கட்டிடக் கற்கள்',
-    person: 'Monojkumar anandhan',
+    person: 'Manojkumar Anandhan',
     phone: '9751094748',
     image: monojsteelsImg,
     accent: '#dc2626',
@@ -891,7 +896,7 @@ export const services = [
     companyTa: 'மெஜஸ்டிக் ஸ்டுடியோ',
     desc: 'Capturing Your Precious Moments Forever',
     descTa: 'உங்கள் பொன்னான தருணங்களை என்றென்றும் சேகரித்தல்',
-    person: 'Majestic studio',
+    person: 'Majestic Studio',
     phone: '9842943054',
     image: majesticstudioImg,
     accent: '#db2777',
@@ -1203,24 +1208,19 @@ export const services = [
       }
     ],
   },
+
   {
-    id: 'food-delivery-express',
-    company: 'Food Delivery Express',
-    desc: 'Order your favorite meals.',
-    tag: 'Food Platform.',
-    image: food,
-    features: []
-  },
-  {
-    id: 'supermarket',
-    company: 'Supermarket / Grocery',
-    companyTa: 'சூப்பர் மார்க்கெட் / மளிகை',
-    desc: 'Fresh Fruits, Vegetables, Dairy, Bakery, Beverages & Snacks',
-    descTa: 'புதிய பழங்கள், காய்கறிகள், பால் பொருட்கள், பேக்கரி, பானங்கள் & தின்பண்டங்கள்',
-    tag: 'FRESH GROCERY',
-    tagTa: 'புதிய மளிகை',
-    image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=800',
-    accent: '#22c55e',
+    id: 'sri-maha-ganapathi-electricals',
+    company: 'Sri Maha Ganapathi Electricals',
+    companyTa: 'ஸ்ரீ மகா கணபதி எலக்ட்ரிக்கல்ஸ்',
+    desc: 'Electricals & Hardware',
+    descTa: 'எலக்ட்ரிக்கல்ஸ் & ஹார்டுவேர்',
+    person: 'S. Senthilkumar',
+    phone: '9790629888',
+    image: electricalImg,
+    tag: 'HARDWARE & ELECTRICALS',
+    tagTa: 'ஹார்டுவேர் & எலக்ட்ரிக்கல்ஸ்',
+    accent: '#dc2626',
     features: []
   }
 ];

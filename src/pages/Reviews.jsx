@@ -13,7 +13,7 @@ const T = {
   dark:      '#0f172a',
   darkMid:   '#1e293b',
   slate:     '#475569',
-  muted:     '#94a3b8',
+  muted:     '#64748b',
   border:    '#cbd5e1', // Professional border
   bg:        '#f8fafc',
   white:     '#ffffff',
@@ -173,30 +173,22 @@ export default function Reviews() {
       ══════════════════════════════════════════════════ */}
       <section style={{
         position: 'relative',
-        padding: isMobile ? '5rem 0' : '7rem 0 6rem',
-        overflow: 'hidden',
-        background: T.dark,
-        display: 'flex', alignItems: 'center'
+        padding: isMobile ? '3rem 0 6rem' : '4rem 0 8rem',
+        background: T.dark, // matches the footer color
+        color: T.white,
+        overflow: 'visible'
       }}>
-        {/* Background Image */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-          <img
-            src="https://images.unsplash.com/photo-1556761175-5973dc0f32b7?q=80&w=2062&auto=format&fit=crop"
-            alt="Customer review background"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', opacity: 0.3 }}
-          />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.7) 100%)' }} />
+        {/* Wave Bottom */}
+        <div style={{ position: 'absolute', bottom: -2, left: 0, width: '100%', overflow: 'hidden', lineHeight: 0, zIndex: 1 }}>
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: isMobile ? '80px' : '150px' }}>
+            <path fill="#f8fafc" fillOpacity="1" d="M0,160L48,144C96,128,192,96,288,106.7C384,117,480,171,576,197.3C672,224,768,224,864,197.3C960,171,1056,117,1152,101.3C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
         </div>
 
-        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '1.1fr 1fr',
-            gap: isMobile ? '3rem' : '4rem',
-            alignItems: 'center'
-          }}>
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', justifyContent: 'space-between', gap: '3rem' }}>
             
-            <motion.div variants={stagger} initial="initial" animate="animate" style={{ textAlign: isMobile ? 'center' : 'left' }}>
+            <motion.div variants={stagger} initial="initial" animate="animate" style={{ flex: 1, maxWidth: 700 }}>
               <motion.div variants={childFade}>
                 <span style={{ 
                   display: 'inline-flex', alignItems: 'center', gap: 6,
@@ -210,7 +202,7 @@ export default function Reviews() {
               </motion.div>
 
               <motion.h1 variants={childFade} style={{ 
-                fontSize: isSm ? '2.4rem' : isMobile ? '3rem' : '3.8rem', 
+                fontSize: isSm ? '2rem' : isMobile ? '2.5rem' : '3.5rem', 
                 fontWeight: 800, color: T.white, letterSpacing: '-1px', 
                 lineHeight: 1.15, margin: '0 0 1.25rem' 
               }}>
@@ -221,24 +213,25 @@ export default function Reviews() {
                 </span>
               </motion.h1>
 
-              <motion.p variants={childFade} style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: 1.6, margin: isMobile ? '0 auto 2.5rem' : '0 0 2.5rem', fontWeight: 400, maxWidth: 540 }}>
+              <motion.p variants={childFade} style={{ color: '#e2e8f0', fontSize: '1.15rem', lineHeight: 1.6, margin: '0 0 2rem', fontWeight: 400, maxWidth: 600 }}>
                 {t("Real reviews from verified customers who experienced our professional services firsthand.", "எங்கள் சேவைகளை அனுபவித்த வாடிக்கையாளர்களிடமிருந்து உண்மையான மதிப்புரைகள்.")}
               </motion.p>
             </motion.div>
 
-            {/* Corporate Stats Cards - Desktop Right Side, Mobile Bottom */}
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} style={{
-              display: 'flex', flexDirection: 'column', gap: '1rem'
-            }}>
+            {/* Corporate Stats Cards - Desktop Right Side */}
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} style={{ flex: 0.8, display: 'flex', justifyContent: 'flex-end', width: isMobile ? '100%' : 'auto' }}>
               <div style={{
                 background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(10px)',
                 padding: '2rem', borderRadius: 12, border: '1px solid rgba(255,255,255,0.08)',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '2rem'
+                display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'center' : 'space-between', 
+                flexDirection: isMobile ? 'column' : 'row',
+                flexWrap: 'wrap', gap: '2rem',
+                width: '100%', textAlign: isMobile ? 'center' : 'left'
               }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, flexDirection: isMobile ? 'column' : 'row' }}>
                     <span style={{ fontSize: '3rem', fontWeight: 800, color: T.white, lineHeight: 1 }}>{avgRating}</span>
-                    <div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start' }}>
                       <StarRow rating={Math.round(avgRating)} size={18} />
                       <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8', display: 'block', marginTop: 4 }}>
                         {t("Average Rating", "சராசரி மதிப்பீடு")}
@@ -247,18 +240,18 @@ export default function Reviews() {
                   </div>
                 </div>
                 
-                <div style={{ width: 1, height: 60, background: 'rgba(255,255,255,0.1)' }} className="hide-mobile" />
+                {!isMobile && <div style={{ width: 1, height: 60, background: 'rgba(255,255,255,0.1)' }} />}
 
-                <div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start' }}>
                   <span style={{ fontSize: '2rem', fontWeight: 800, color: T.white, lineHeight: 1, display: 'block', marginBottom: 4 }}>{reviews.length}+</span>
                   <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>
                     {t("Total Reviews", "மொத்த மதிப்புரைகள்")}
                   </span>
                 </div>
 
-                <div style={{ width: 1, height: 60, background: 'rgba(255,255,255,0.1)' }} className="hide-mobile" />
+                {!isMobile && <div style={{ width: 1, height: 60, background: 'rgba(255,255,255,0.1)' }} />}
 
-                <div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start' }}>
                   <span style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981', lineHeight: 1, display: 'block', marginBottom: 4 }}>98%</span>
                   <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>
                     {t("Satisfaction", "திருப்தி")}

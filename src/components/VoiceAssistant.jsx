@@ -13,6 +13,15 @@ const VoiceAssistant = () => {
   const [aiResponse, setAiResponse] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isHidden, setIsHidden] = useState(false);
+
+  useEffect(() => {
+    const handleCartVisibility = (e) => {
+      setIsHidden(e.detail.isVisible);
+    };
+    window.addEventListener('cartVisibilityChanged', handleCartVisibility);
+    return () => window.removeEventListener('cartVisibilityChanged', handleCartVisibility);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -386,15 +395,21 @@ const VoiceAssistant = () => {
     }
   };
 
-  if (!recognitionRef.current && !window.webkitSpeechRecognition) return null;
+  const isSpeechSupported = !!(recognitionRef.current || window.webkitSpeechRecognition);
+  if (!isSpeechSupported || isHidden) return null;
 
   return (
-    <div style={{
+    <div className="voice-assistant-wrapper" style={{
       position: 'fixed',
       bottom: isMobile ? '1rem' : '2rem',
       right: isMobile ? '1rem' : '2rem',
       zIndex: 9999
     }}>
+      <style>{`
+        body.hide-ai-assistant .voice-assistant-wrapper {
+          display: none !important;
+        }
+      `}</style>
       <AnimatePresence>
         {isOpen && (
           <motion.div

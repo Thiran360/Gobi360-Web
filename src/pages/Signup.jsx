@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Phone } from 'lucide-react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Phone, XCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import { useShop } from '../context/ShopContext';
 import authBg from '../assets/auth_bg_new.png';
 
 const Signup = () => {
   const { t } = useLanguage();
   const { signup, loading, error: authError } = useAuth();
+  const { loginRole } = useShop();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
   const [localError, setLocalError] = useState('');
@@ -44,7 +47,9 @@ const Signup = () => {
     const result = await signup(signupData);
     if (result.success) {
       console.log("Signup Successful");
-      navigate('/profile');
+      const finalUser = result.user || { name: formData.name };
+      loginRole('customer', finalUser.name);
+      navigate(location.state?.from || '/');
     } else {
       console.log("Signup Failed:", result.error);
       setLocalError(result.error);
@@ -94,16 +99,35 @@ const Signup = () => {
 
           {localError && (
             <div style={{
-              backgroundColor: '#fef2f2',
-              color: '#dc2626',
-              padding: '1rem',
+              backgroundColor: '#fff5f5',
+              border: '1.5px solid #fecaca',
               borderRadius: '1rem',
               marginBottom: '1.5rem',
-              fontSize: '0.85rem',
-              fontWeight: '700',
-              border: '1px solid #fee2e2'
+              overflow: 'hidden'
             }}>
-              {localError}
+              <div style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.75rem',
+                padding: '1rem 1.1rem'
+              }}>
+                <div style={{
+                  width: '34px', height: '34px', borderRadius: '50%',
+                  backgroundColor: '#fee2e2',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                }}>
+                  <XCircle size={18} color="#dc2626" />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: '0.78rem', fontWeight: 800, color: '#b91c1c', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '0.2rem' }}>
+                    Registration Failed
+                  </p>
+                  <p style={{ fontSize: '0.88rem', fontWeight: 600, color: '#dc2626', lineHeight: 1.45 }}>
+                    {localError}
+                  </p>
+                </div>
+              </div>
+              <div style={{ height: '3px', background: 'linear-gradient(90deg, #ef4444, #f87171, #fca5a5)', borderRadius: '0 0 1rem 1rem' }} />
             </div>
           )}
 
@@ -138,9 +162,9 @@ const Signup = () => {
                   <Phone size={18} />
                 </div>
                 <input
-                  type="tel" required placeholder="+91 98765 43210"
+                  type="tel" required placeholder="9876543210" maxLength={10}
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
                   style={{
                     width: '100%', padding: '1rem 1.25rem 1rem 3.25rem',
                     borderRadius: '1.25rem', backgroundColor: '#f8fafc',
@@ -245,7 +269,7 @@ const Signup = () => {
 
           <p style={{ textAlign: 'center', marginTop: '2rem', color: '#64748b', fontWeight: '600', fontSize: '0.95rem' }}>
             {t("Already have an account?", "ஏற்கனவே கணக்கு உள்ளதா?")}{' '}
-            <Link to="/login" style={{ color: '#6366f1', fontWeight: '800', textDecoration: 'none' }}>
+            <Link to="/login" state={location.state} style={{ color: '#6366f1', fontWeight: '800', textDecoration: 'none' }}>
               {t("Log In", "உள்நுழைக")}
             </Link>
           </p>
