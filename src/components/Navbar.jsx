@@ -741,7 +741,7 @@ const Navbar = () => {
               <div
                 onClick={toggleLanguage}
                 style={{
-                  width: '84px',
+                  width: '92px',
                   height: '36px',
                   backgroundColor: '#f1f5f9',
                   borderRadius: '999px',
@@ -758,27 +758,26 @@ const Navbar = () => {
               >
                 <div style={{
                   position: 'absolute',
-                  inset: 0,
-                  display: 'flex',
+                  inset: '3px',
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
                   alignItems: 'center',
-                  justifyContent: 'space-around',
-                  fontSize: '0.65rem',
-                  fontWeight: '900',
+                  fontSize: '0.7rem',
+                  fontWeight: '800',
                   zIndex: 1,
-                  pointerEvents: 'none',
-                  padding: '0 6px'
+                  pointerEvents: 'none'
                 }}>
-                  <span style={{ color: language === 'en' ? 'white' : '#64748b', transition: 'color 0.3s ease' }}>EN</span>
-                  <span style={{ color: language === 'ta' ? 'white' : '#64748b', transition: 'color 0.3s ease' }}>தமிழ்</span>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: language === 'en' ? '#ffffff' : '#64748b', transition: 'color 0.3s ease' }}>EN</span>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: '2px', color: language === 'ta' ? '#ffffff' : '#64748b', transition: 'color 0.3s ease' }}>தமிழ்</span>
                 </div>
 
                 <motion.div
                   layout
                   initial={false}
-                  animate={{ x: language === 'en' ? 0 : 40 }}
+                  animate={{ x: language === 'en' ? 0 : 43 }}
                   transition={{ type: "spring", stiffness: 450, damping: 35 }}
                   style={{
-                    width: '38px',
+                    width: '43px',
                     height: '28px',
                     borderRadius: '999px',
                     background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
@@ -1019,7 +1018,7 @@ const Navbar = () => {
                   <div
                     onClick={toggleLanguage}
                     style={{
-                      width: '84px', height: '34px',
+                      width: '92px', height: '34px',
                       backgroundColor: '#f1f5f9',
                       borderRadius: '999px', padding: '3px',
                       cursor: 'pointer', display: 'flex',
@@ -1029,20 +1028,20 @@ const Navbar = () => {
                     }}
                   >
                     <div style={{
-                      position: 'absolute', inset: 0,
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-around',
-                      fontSize: '0.65rem', fontWeight: '900',
-                      zIndex: 1, pointerEvents: 'none', padding: '0 6px'
+                      position: 'absolute', inset: '3px',
+                      display: 'grid', gridTemplateColumns: '1fr 1fr',
+                      alignItems: 'center', fontSize: '0.7rem', fontWeight: '800',
+                      zIndex: 1, pointerEvents: 'none'
                     }}>
-                      <span style={{ color: language === 'en' ? 'white' : '#64748b', transition: 'color 0.3s ease' }}>EN</span>
-                      <span style={{ color: language === 'ta' ? 'white' : '#64748b', transition: 'color 0.3s ease' }}>தமிழ்</span>
+                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: language === 'en' ? '#ffffff' : '#64748b', transition: 'color 0.3s ease' }}>EN</span>
+                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: '2px', color: language === 'ta' ? '#ffffff' : '#64748b', transition: 'color 0.3s ease' }}>தமிழ்</span>
                     </div>
                     <motion.div
                       layout initial={false}
-                      animate={{ x: language === 'en' ? 0 : 40 }}
+                      animate={{ x: language === 'en' ? 0 : 43 }}
                       transition={{ type: 'spring', stiffness: 450, damping: 35 }}
                       style={{
-                        width: '38px', height: '26px', borderRadius: '999px',
+                        width: '43px', height: '26px', borderRadius: '999px',
                         background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
                         zIndex: 0, boxShadow: '0 2px 8px rgba(59, 130, 246, 0.4)'
                       }}

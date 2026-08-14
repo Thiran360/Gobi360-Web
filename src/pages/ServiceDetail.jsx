@@ -1447,7 +1447,7 @@ const ServiceDetail = () => {
                     fontSize: '1rem'
                   }}
                 >
-                  <Phone size={22} /> {t("Call Now", "இப்போது அழைக்கவும்")}
+                  <Phone size={22} /> {t("Book Appointment", "அப்பாயிண்ட்மென்ட் முன்பதிவு")}
                 </motion.a>
 
                 <motion.a
