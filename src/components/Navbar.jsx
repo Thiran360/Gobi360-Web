@@ -892,6 +892,7 @@ const Navbar = () => {
                     e.currentTarget.style.borderColor = '#3b82f6';
                     e.currentTarget.style.boxShadow = '0 10px 20px rgba(59, 130, 246, 0.08)';
                   }
+
                 }}
                 onMouseOut={e => {
                   if (!isMobile) {
