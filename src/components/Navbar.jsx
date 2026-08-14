@@ -430,8 +430,9 @@ const Navbar = () => {
               style={{
                 flex: isMobile ? 'none' : 1,
                 width: isMobile ? '100%' : 'auto',
-                maxWidth: isMobile ? '100%' : '380px',
-                margin: isMobile ? '0 0 0.25rem 0' : '0 1.5rem',
+                maxWidth: isMobile ? '100%' : (language === 'ta' ? '300px' : '360px'),
+                minWidth: isMobile ? '100%' : '140px',
+                margin: isMobile ? '0 0 0.25rem 0' : (language === 'ta' ? '0 0.6rem' : '0 1.25rem'),
                 position: 'relative',
                 order: isMobile ? 3 : 2
               }}
@@ -697,9 +698,9 @@ const Navbar = () => {
 
 
           {/* Navigation */}
-          <nav style={{ display: 'flex', gap: '0.85rem', alignItems: 'center', flexShrink: 0, order: isMobile ? 2 : 3 }}>
+          <nav style={{ display: 'flex', gap: language === 'ta' ? '0.5rem' : '0.75rem', alignItems: 'center', flexShrink: 0, order: isMobile ? 2 : 3 }}>
             {!isMobile && (
-              <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: language === 'ta' ? '0.45rem' : '0.75rem', alignItems: 'center' }}>
                 {navItems.map(item => (
                   <Link
                     key={item.name}
@@ -708,10 +709,11 @@ const Navbar = () => {
                       textDecoration: 'none',
                       color: location.pathname === item.path ? '#3b82f6' : '#475569',
                       fontWeight: '800',
-                      fontSize: '0.9rem',
+                      fontSize: language === 'ta' ? '0.83rem' : '0.88rem',
+                      whiteSpace: 'nowrap',
                       transition: 'all 0.25s ease',
                       position: 'relative',
-                      padding: '0.5rem 0.2rem'
+                      padding: '0.4rem 0.15rem'
                     }}
                     onMouseOver={e => !(location.pathname === item.path) && (e.currentTarget.style.color = '#0f172a')}
                     onMouseOut={e => !(location.pathname === item.path) && (e.currentTarget.style.color = '#475569')}
@@ -731,7 +733,7 @@ const Navbar = () => {
                     )}
                   </Link>
                 ))}
-                <div style={{ width: '1px', height: '20px', backgroundColor: '#e2e8f0', margin: '0 0.5rem' }}></div>
+                <div style={{ width: '1px', height: '20px', backgroundColor: '#e2e8f0', margin: '0 0.35rem' }}></div>
               </div>
             )}
 
@@ -873,14 +875,16 @@ const Navbar = () => {
               <Link to="/profile" style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: isMobile ? '0' : '0.85rem',
-                padding: isMobile ? '0' : '0.5rem 1.15rem',
+                gap: isMobile ? '0' : '0.5rem',
+                padding: isMobile ? '0' : '0.4rem 0.85rem',
                 borderRadius: isMobile ? '50%' : '1.25rem',
                 backgroundColor: isMobile ? 'transparent' : '#f8fafc',
                 border: isMobile ? 'none' : '1px solid #e2e8f0',
                 textDecoration: 'none',
                 transition: 'all 0.3s ease',
-                boxShadow: isMobile ? 'none' : '0 2px 4px rgba(0,0,0,0.02)'
+                boxShadow: isMobile ? 'none' : '0 2px 4px rgba(0,0,0,0.02)',
+                flexShrink: 0,
+                maxWidth: isMobile ? 'auto' : '150px'
               }}
                 onMouseOver={e => {
                   if (!isMobile) {
@@ -908,7 +912,23 @@ const Navbar = () => {
                 }}>
                   {user?.name?.[0]?.toUpperCase()}
                 </div>
-                {!isMobile && <span style={{ fontWeight: '800', color: '#0f172a', fontSize: '0.9rem' }}>{user?.name}</span>}
+                {!isMobile && (
+                  <span
+                    title={user?.name}
+                    style={{
+                      fontWeight: '800',
+                      color: '#0f172a',
+                      fontSize: '0.85rem',
+                      maxWidth: '90px',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: 'inline-block'
+                    }}
+                  >
+                    {user?.name}
+                  </span>
+                )}
               </Link>
             ) : (
               <Link to="/login" style={{
