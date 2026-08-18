@@ -8,7 +8,7 @@ import '../FoodDelivery/FoodDelivery.css';
 import '../FoodDelivery/PremiumOverride.css';
 import BannerCarousel from '../FoodDelivery/BannerCarousel';
 import CategoryHero from './CategoryHero';
-import { apiUrl, ENDPOINTS } from '../../lib/api';
+import { apiUrl, ENDPOINTS, API_BASE_URL } from '../../lib/api';
 
 const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
   const { t } = useLanguage();
@@ -157,7 +157,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
         }
         return;
       }
-      const response = await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/cart/?user_id=${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/cart/?user_id=${userId}`, {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       });
       const data = await response.json();
@@ -353,7 +353,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
     try {
       const userId = getUserId();
       if (!userId) return; // Skip backend sync if not logged in
-      const res = await fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/cart/', {
+      const res = await fetch(`${API_BASE_URL}/cart/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -397,7 +397,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
 
     if (item.id) {
       try {
-        await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/cart/item/${item.id}/`, {
+        await fetch(`${API_BASE_URL}/cart/item/${item.id}/`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -440,7 +440,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
 
     if (item.id) {
       try {
-        await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/cart/item/${item.id}/`, {
+        await fetch(`${API_BASE_URL}/cart/item/${item.id}/`, {
           method: 'DELETE',
           headers: { 'ngrok-skip-browser-warning': 'true' }
         });
@@ -464,7 +464,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
 
     try {
       const userId = getUserId();
-      const response = await fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/checkout/', {
+      const response = await fetch(`${API_BASE_URL}/checkout/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -554,7 +554,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
     try {
       const userId = getUserId();
       if (!userId) return; // Do not fetch address if not logged in
-      const response = await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/address/?user_id=${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/address/?user_id=${userId}`, {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       });
       const data = await response.json();
@@ -610,7 +610,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
     e.stopPropagation();
     if (window.confirm('Are you sure you want to delete this address?')) {
       try {
-        const response = await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/address/${id}/`, {
+        const response = await fetch(`${API_BASE_URL}/address/${id}/`, {
           method: 'DELETE',
           headers: { 'ngrok-skip-browser-warning': 'true' }
         });
@@ -696,8 +696,8 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
       const isLocalId = formData.id ? String(formData.id).length > 10 : false;
 
       const url = (formData.id && !isLocalId)
-        ? `https://80db-103-175-108-243.ngrok-free.app/gobi360/address/${formData.id}/`
-        : 'https://80db-103-175-108-243.ngrok-free.app/gobi360/address/';
+        ? `${API_BASE_URL}/address/${formData.id}/`
+        : `${API_BASE_URL}/address/`;
       const method = (formData.id && !isLocalId) ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -761,7 +761,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
   };
 
   useEffect(() => {
-    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/categories/', {
+    fetch(`${API_BASE_URL}/categories/`, {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
@@ -771,28 +771,28 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
       })
       .catch(console.error);
 
-    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/shops/', {
+    fetch(`${API_BASE_URL}/shops/`, {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
       .then(data => setShops(Array.isArray(data) ? data : data.results || []))
       .catch(console.error);
 
-    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/product-categories/', {
+    fetch(`${API_BASE_URL}/product-categories/`, {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
       .then(data => setProductCategories(Array.isArray(data) ? data : data.results || []))
       .catch(console.error);
 
-    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/products/', {
+    fetch(`${API_BASE_URL}/products/`, {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
       .then(data => setProducts(Array.isArray(data) ? data : data.results || []))
       .catch(console.error);
 
-    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/product-variations/', {
+    fetch(`${API_BASE_URL}/product-variations/`, {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())

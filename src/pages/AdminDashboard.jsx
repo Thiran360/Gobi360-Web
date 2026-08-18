@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { PhoneCall, LogOut, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../lib/api';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const fetchCalls = () => {
-      fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/call-request-list/', {
+      fetch(`${API_BASE_URL}/call-request-list/`, {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       })
         .then(res => res.json())

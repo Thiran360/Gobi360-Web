@@ -3,6 +3,7 @@ import { Star, ArrowRight, ShieldCheck, Phone, Building2, CircuitBoard, BookOpen
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../lib/api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import gvGlazing from '../assets/gv_glazing.png';
 import abiramiMain from '../assets/abirami_main.png';
@@ -348,7 +349,7 @@ export default function Experts() {
 
     let callRequestId = null;
     try {
-      const res = await fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/call-request/', {
+      const res = await fetch(`${API_BASE_URL}/call-request/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -382,14 +383,14 @@ export default function Experts() {
     try {
       // Try PATCH on existing call request
       if (callPopup.callRequestId) {
-        await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/call-request/${callPopup.callRequestId}/`, {
+        await fetch(`${API_BASE_URL}/call-request/${callPopup.callRequestId}/`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status })
         });
       } else {
         // Fallback: create a new call request with correct status
-        await fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/call-request/', {
+        await fetch(`${API_BASE_URL}/call-request/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -415,7 +416,7 @@ export default function Experts() {
     hasFetched.current = true;
 
     // Fetch experts
-    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/experts/', {
+    fetch(`${API_BASE_URL}/experts/`, {
       headers: {
         'ngrok-skip-browser-warning': 'true'
       }
@@ -425,7 +426,7 @@ export default function Experts() {
       .catch(err => console.error(err));
 
     // Fetch services to map expert → correct service ID
-    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/services/', {
+    fetch(`${API_BASE_URL}/services/`, {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())

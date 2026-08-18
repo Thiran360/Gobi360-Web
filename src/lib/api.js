@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'https://80db-103-175-108-243.ngrok-free.app/gobi360';
+export const API_BASE_URL = 'https://api.codingboss.in/gobi360';
 
 export const API_HEADERS = {
   'ngrok-skip-browser-warning': 'true',
