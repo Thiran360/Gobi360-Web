@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Clock, Star, TrendingUp, Package, AlertCircle, X, Save, Edit2, User, Trash2, LogOut } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { API_HEADERS, ENDPOINTS, apiFetch, apiJson, apiUrl } from '../lib/api';
+import { API_HEADERS, ENDPOINTS, apiFetch, apiJson, apiUrl, API_BASE_URL } from '../lib/api';
 
 export default function ExpertDashboard() {
   const { role, ownerShopName, orders, logoutRole } = useShop();
@@ -111,7 +111,7 @@ export default function ExpertDashboard() {
   // Fetch shop image
   useEffect(() => {
     if (!ownerShopName) return;
-    fetch('https://api.codingboss.in/gobi360/shops/', {
+    fetch(`${API_BASE_URL}/shops/`, {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(r => r.json())
@@ -125,7 +125,7 @@ export default function ExpertDashboard() {
 
   // Fetch products + orders
   useEffect(() => {
-    fetch('https://api.codingboss.in/gobi360/products/', {
+    fetch(`${API_BASE_URL}/products/`, {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(r => r.json())
@@ -136,7 +136,7 @@ export default function ExpertDashboard() {
       const shopId = user?.id || 1;
       // Fetch expert services for the dropdown using expert_id, fallback to user.id
       const expertId = user?.expert_id || user?.id || 4;
-      fetch(`https://api.codingboss.in/gobi360/experts/${expertId}/services/`, {
+      fetch(`${API_BASE_URL}/experts/${expertId}/services/`, {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       })
         .then(r => r.json())

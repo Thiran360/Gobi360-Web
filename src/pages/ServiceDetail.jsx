@@ -9,7 +9,7 @@ import FoodDeliveryApp from '../components/FoodDelivery/FoodDeliveryApp';
 import SupermarketApp from '../components/Supermarket/SupermarketApp';
 import DynamicCategoryApp from '../components/DynamicCategory/DynamicCategoryApp';
 import { useAuth } from '../context/AuthContext';
-import { ENDPOINTS, apiJson } from '../lib/api';
+import { ENDPOINTS, apiJson, apiUrl } from '../lib/api';
 
 const ServiceDetail = () => {
   const { id } = useParams();
@@ -42,7 +42,7 @@ const ServiceDetail = () => {
     if (isNaN(finalServiceId)) finalServiceId = 39;
 
     try {
-      await fetch('https://api.codingboss.in/gobi360/call-request/', {
+      await fetch(apiUrl(ENDPOINTS.callRequest), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -62,28 +62,28 @@ const ServiceDetail = () => {
     if (hasFetched.current) return;
     hasFetched.current = true;
 
-    fetch('https://api.codingboss.in/gobi360/experts/', {
+    fetch(apiUrl(ENDPOINTS.experts), {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
       .then(data => setApiData(Array.isArray(data) ? data : data.results || []))
       .catch(err => console.error(err));
 
-    fetch('https://api.codingboss.in/gobi360/categories/', {
+    fetch(apiUrl(ENDPOINTS.categories), {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
       .then(data => setApiCategories(Array.isArray(data) ? data : data.results || []))
       .catch(err => console.error(err));
 
-    fetch('https://api.codingboss.in/gobi360/product-categories/', {
+    fetch(apiUrl(ENDPOINTS.productCategories), {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
       .then(data => setApiProductCategories(Array.isArray(data) ? data : data.results || []))
       .catch(err => console.error(err));
 
-    fetch('https://api.codingboss.in/gobi360/products/', {
+    fetch(apiUrl(ENDPOINTS.products), {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
@@ -93,7 +93,7 @@ const ServiceDetail = () => {
 
   useEffect(() => {
     if (id && id.startsWith('api-cat-')) {
-      fetch('https://api.codingboss.in/gobi360/shops/', {
+      fetch(apiUrl(ENDPOINTS.shops), {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       })
         .then(res => res.json())
@@ -104,8 +104,8 @@ const ServiceDetail = () => {
       setIsApiLoading(true);
       const headers = { 'ngrok-skip-browser-warning': 'true' };
       Promise.all([
-        fetch(`https://api.codingboss.in/gobi360/experts/${matchedId}/`, { headers }).then(r => r.ok ? r.json() : null).catch(() => null),
-        fetch(`https://api.codingboss.in/gobi360/experts/${matchedId}/services/`, { headers }).then(r => r.ok ? r.json() : []).catch(() => [])
+        fetch(apiUrl(`/experts/${matchedId}/`), { headers }).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch(apiUrl(`/experts/${matchedId}/services/`), { headers }).then(r => r.ok ? r.json() : []).catch(() => [])
       ]).then(([expertData, servicesData]) => {
         if (expertData) {
           setSingleApiExpert(expertData);

@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { services } from '../data/servicesData';
-import { API_HEADERS, ENDPOINTS, apiFetch, apiUrl } from '../lib/api';
+import { API_HEADERS, ENDPOINTS, apiFetch, apiUrl, fetchFilteredProducts } from '../lib/api';
+import useDebounce from '../hooks/useDebounce';
 import logo from '../assets/gobi360-logo.png';
 
 const Navbar = () => {
@@ -18,6 +19,7 @@ const Navbar = () => {
   const { user, isLoggedIn, logout } = useAuth();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 350);
   const [searchResults, setSearchResults] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
   const searchInputRef = useRef(null);
@@ -40,7 +42,7 @@ const Navbar = () => {
         const userId = parsed?.id || parsed?.user_id;
         if (userId) {
           try {
-            const r = await fetch(`https://api.codingboss.in/gobi360/cart/?user_id=${userId}`, {
+            const r = await fetch(apiUrl(ENDPOINTS.cart(userId)), {
               headers: { 'ngrok-skip-browser-warning': 'true' }
             });
             if (r.ok) {
@@ -89,8 +91,8 @@ const Navbar = () => {
   useEffect(() => {
     const headers = { 'ngrok-skip-browser-warning': 'true' };
     Promise.all([
-      fetch('https://api.codingboss.in/gobi360/experts/', { headers }).then(r => r.json()).catch(() => []),
-      fetch('https://api.codingboss.in/gobi360/shops/', { headers }).then(r => r.json()).catch(() => [])
+      fetch(apiUrl(ENDPOINTS.experts), { headers }).then(r => r.json()).catch(() => []),
+      fetch(apiUrl(ENDPOINTS.shops), { headers }).then(r => r.json()).catch(() => [])
     ]).then(([expertsRaw, shopsRaw]) => {
       const experts = (Array.isArray(expertsRaw) ? expertsRaw : expertsRaw?.results || []);
       const shops = (Array.isArray(shopsRaw) ? shopsRaw : shopsRaw?.results || []);
@@ -189,89 +191,56 @@ const Navbar = () => {
   }, [showMiniCart, miniCartItems]);
 
   useEffect(() => {
-    if (searchQuery.trim() === '') {
+    if (debouncedSearchQuery.trim() === '') {
       setSearchResults([]);
       return;
     }
 
-    const query = searchQuery.toLowerCase().trim();
+    let isCancelled = false;
 
-    const allFeatureLists = (service) => [
-      service.features,
-      service.insurance,
-      service.steelCement,
-      service.aggregatesBlocks,
-      service.electricalServices,
-      service.electronicsRepair,
-      service.studioPortrait,
-      service.weddingOutdoor,
-      service.enrichment,
-    ];
-
-    // Combine static + API services for search
-    const allServices = [...services, ...apiSearchPool];
-
-    const results = [];
-
-    allServices.forEach(service => {
-      const company = (language === 'en' ? service.company : service.companyTa || '').toLowerCase();
-      const desc = (language === 'en' ? service.desc : service.descTa || '').toLowerCase();
-      const tag = (language === 'en' ? service.tag : service.tagTa || '').toLowerCase();
-      const person = (service.person || '').toLowerCase();
-
-      let matchType = null;
-      let matchedKeyword = '';
-      let priority = 2;
-
-      if (company.includes(query)) {
-        matchType = 'Service';
-        matchedKeyword = language === 'en' ? service.company : service.companyTa || service.company;
-        priority = company.startsWith(query) ? 0 : 2;
-      } else if (person.includes(query)) {
-        matchType = 'Expert';
-        matchedKeyword = service.person;
-        priority = person.startsWith(query) ? 1 : 2;
-      } else if (tag.includes(query)) {
-        matchType = 'Category';
-        matchedKeyword = language === 'en' ? service.tag : service.tagTa || service.tag;
-        priority = tag.startsWith(query) ? 1 : 2;
-      } else if (desc.includes(query)) {
-        matchType = 'Service';
-        matchedKeyword = language === 'en' ? service.desc : service.descTa || service.desc;
-        priority = 2;
-      } else {
-        for (const list of allFeatureLists(service)) {
-          if (!Array.isArray(list)) continue;
-          for (const f of list) {
-            const title = (language === 'en' ? f.title : f.titleTa || '').toLowerCase();
-            const fdesc = (language === 'en' ? f.desc : f.descTa || '').toLowerCase();
-            if (title.includes(query) || fdesc.includes(query)) {
-              matchType = 'Feature';
-              matchedKeyword = language === 'en' ? f.title : f.titleTa || f.title;
-              priority = title.startsWith(query) ? 1 : 2;
-              break;
-            }
-          }
-          if (matchType) break;
-        }
+    // Call server-side API products/filter/?search=...
+    fetchFilteredProducts(debouncedSearchQuery).then(products => {
+      if (isCancelled) return;
+      if (!Array.isArray(products) || products.length === 0) {
+        setSearchResults([]);
+        setIsDropdownOpen(true);
+        return;
       }
 
-      if (matchType) {
-        results.push({ ...service, matchType, matchedKeyword, _priority: priority });
+      const formattedProducts = products.map(p => ({
+        id: `api-product-${p.id}`,
+        company: p.product_name || p.name || p.title || 'Product Item',
+        companyTa: p.product_name_ta || p.name || p.title || '',
+        desc: p.description || p.product_category_name || p.category_name || (p.price ? `₹${p.price}` : 'Product'),
+        descTa: p.description_ta || '',
+        person: p.shop_name || p.vendor || '',
+        shopName: p.shop_name || p.vendor || '',
+        image: p.product_image || p.image || p.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500',
+        accent: '#10b981',
+        tag: 'PRODUCT',
+        tagTa: 'பொருள்',
+        matchType: 'Product',
+        matchedKeyword: p.product_name || p.name || 'Product',
+        isApiProduct: true,
+        productId: p.id,
+        shopId: p.shop_id || p.shop || 1,
+        categoryId: p.product_category_id || p.category_id || p.category || 1,
+        price: p.price
+      }));
+
+      setSearchResults(formattedProducts);
+      setIsDropdownOpen(true);
+    }).catch(() => {
+      if (!isCancelled) {
+        setSearchResults([]);
+        setIsDropdownOpen(true);
       }
     });
 
-    // Sort: starts-with first (priority 0 → 1 → 2), then alphabetically within each group
-    results.sort((a, b) => {
-      if (a._priority !== b._priority) return a._priority - b._priority;
-      const aName = (language === 'en' ? a.company : a.companyTa || a.company).toLowerCase();
-      const bName = (language === 'en' ? b.company : b.companyTa || b.company).toLowerCase();
-      return aName.localeCompare(bName);
-    });
-
-    setSearchResults(results);
-    setIsDropdownOpen(true);
-  }, [searchQuery, language, apiSearchPool]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [debouncedSearchQuery]);
 
   // Close search dropdown when clicking outside
   useEffect(() => {
@@ -302,6 +271,11 @@ const Navbar = () => {
       if (topName === q || personName === q || topName.includes(q) || searchResults.length === 1) {
         if (topResult.isApiShop) {
           navigate(`/services/api-cat-${topResult.categoryId}?shop=${topResult.shopId}`);
+          setSearchQuery('');
+          return;
+        }
+        if (topResult.isApiProduct) {
+          navigate(`/services/api-cat-${topResult.categoryId}?shop=${topResult.shopId}&product=${topResult.productId}`);
           setSearchQuery('');
           return;
         }
@@ -540,6 +514,7 @@ const Navbar = () => {
                               Expert: { bg: '#f0fdf4', text: '#16a34a' },
                               Feature: { bg: '#fdf4ff', text: '#9333ea' },
                               Category: { bg: '#fff7ed', text: '#ea580c' },
+                              Product: { bg: '#ecfdf5', text: '#059669' },
                             };
                             const mt = matchTypeColors[service.matchType] || matchTypeColors.Service;
 
@@ -568,6 +543,9 @@ const Navbar = () => {
                                 to={(() => {
                                   if (service.isApiShop) {
                                     return `/services/api-cat-${service.categoryId}?shop=${service.shopId}`;
+                                  }
+                                  if (service.isApiProduct) {
+                                    return `/services/api-cat-${service.categoryId}?shop=${service.shopId}&product=${service.productId}`;
                                   }
                                   if (service.isApi) {
                                     // API expert → go to /services/<id> detail page (e.g. /services/api-25)
@@ -608,8 +586,20 @@ const Navbar = () => {
                                   <div style={{ fontSize: '0.92rem', fontWeight: '800', color: '#0f172a', lineHeight: 1.25, marginBottom: '1px' }}>
                                     {highlightText(companyName, searchQuery)}
                                   </div>
-                                  <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                    {service.matchType === 'Expert' ? (
+                                  <div style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    {service.shopName ? (
+                                      <>
+                                        <span style={{ color: '#ea580c', fontWeight: '700', flexShrink: 0 }}>
+                                          🏪 {service.shopName}
+                                        </span>
+                                        {descText && (
+                                          <>
+                                            <span style={{ color: '#cbd5e1' }}>•</span>
+                                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{highlightText(descText, searchQuery)}</span>
+                                          </>
+                                        )}
+                                      </>
+                                    ) : service.matchType === 'Expert' ? (
                                       <>
                                         <span style={{ color: '#16a34a', fontWeight: '700' }}>👤 </span>
                                         {highlightText(service.person, searchQuery)}
