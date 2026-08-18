@@ -8,6 +8,7 @@ import '../FoodDelivery/FoodDelivery.css';
 import '../FoodDelivery/PremiumOverride.css';
 import BannerCarousel from '../FoodDelivery/BannerCarousel';
 import CategoryHero from './CategoryHero';
+import { apiUrl, ENDPOINTS } from '../../lib/api';
 
 const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
   const { t } = useLanguage();
@@ -78,7 +79,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
       // (This prevents 404s for ghost shops)
       if (String(shopId) === '3') return; // The user requested to ignore this ghost ID to avoid 404 logs
 
-      fetch(`https://api.codingboss.in/gobi360/reward-setting/${shopId}/`, {
+      fetch(apiUrl(ENDPOINTS.rewardSetting(shopId)), {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       })
         .then(async r => {
@@ -156,7 +157,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
         }
         return;
       }
-      const response = await fetch(`https://api.codingboss.in/gobi360/cart/?user_id=${userId}`, {
+      const response = await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/cart/?user_id=${userId}`, {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       });
       const data = await response.json();
@@ -352,7 +353,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
     try {
       const userId = getUserId();
       if (!userId) return; // Skip backend sync if not logged in
-      const res = await fetch('https://api.codingboss.in/gobi360/cart/', {
+      const res = await fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/cart/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -396,7 +397,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
 
     if (item.id) {
       try {
-        await fetch(`https://api.codingboss.in/gobi360/cart/item/${item.id}/`, {
+        await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/cart/item/${item.id}/`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -439,7 +440,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
 
     if (item.id) {
       try {
-        await fetch(`https://api.codingboss.in/gobi360/cart/item/${item.id}/`, {
+        await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/cart/item/${item.id}/`, {
           method: 'DELETE',
           headers: { 'ngrok-skip-browser-warning': 'true' }
         });
@@ -463,7 +464,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
 
     try {
       const userId = getUserId();
-      const response = await fetch('https://api.codingboss.in/gobi360/checkout/', {
+      const response = await fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/checkout/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -553,7 +554,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
     try {
       const userId = getUserId();
       if (!userId) return; // Do not fetch address if not logged in
-      const response = await fetch(`https://api.codingboss.in/gobi360/address/?user_id=${userId}`, {
+      const response = await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/address/?user_id=${userId}`, {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       });
       const data = await response.json();
@@ -609,7 +610,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
     e.stopPropagation();
     if (window.confirm('Are you sure you want to delete this address?')) {
       try {
-        const response = await fetch(`https://api.codingboss.in/gobi360/address/${id}/`, {
+        const response = await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/address/${id}/`, {
           method: 'DELETE',
           headers: { 'ngrok-skip-browser-warning': 'true' }
         });
@@ -695,8 +696,8 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
       const isLocalId = formData.id ? String(formData.id).length > 10 : false;
 
       const url = (formData.id && !isLocalId)
-        ? `https://api.codingboss.in/gobi360/address/${formData.id}/`
-        : 'https://api.codingboss.in/gobi360/address/';
+        ? `https://80db-103-175-108-243.ngrok-free.app/gobi360/address/${formData.id}/`
+        : 'https://80db-103-175-108-243.ngrok-free.app/gobi360/address/';
       const method = (formData.id && !isLocalId) ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -760,7 +761,7 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
   };
 
   useEffect(() => {
-    fetch('https://api.codingboss.in/gobi360/categories/', {
+    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/categories/', {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
@@ -770,28 +771,28 @@ const DynamicCategoryApp = ({ categoryId, initialShopId, onBack }) => {
       })
       .catch(console.error);
 
-    fetch('https://api.codingboss.in/gobi360/shops/', {
+    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/shops/', {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
       .then(data => setShops(Array.isArray(data) ? data : data.results || []))
       .catch(console.error);
 
-    fetch('https://api.codingboss.in/gobi360/product-categories/', {
+    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/product-categories/', {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
       .then(data => setProductCategories(Array.isArray(data) ? data : data.results || []))
       .catch(console.error);
 
-    fetch('https://api.codingboss.in/gobi360/products/', {
+    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/products/', {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
       .then(data => setProducts(Array.isArray(data) ? data : data.results || []))
       .catch(console.error);
 
-    fetch('https://api.codingboss.in/gobi360/product-variations/', {
+    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/product-variations/', {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())

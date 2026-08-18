@@ -9,6 +9,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import useResponsive from '../hooks/useResponsive';
 import { useShop } from '../context/ShopContext';
+import { apiUrl, ENDPOINTS } from '../lib/api';
 
 // ─── Reusable Toggle ──────────────────────────────────────────────────────────
 const PrivacyToggle = ({ label, description, storageKey }) => {
@@ -145,13 +146,13 @@ const YourOrders = ({ onBack, onViewOrder, showToast }) => {
         const storedUser = localStorage.getItem('user');
         const userId = storedUser ? JSON.parse(storedUser).id || JSON.parse(storedUser).user_id || 1 : 1;
         const [resOrders, resShops, resProducts] = await Promise.all([
-          fetch(`https://api.codingboss.in/gobi360/orders/${userId}/`, {
+          fetch(apiUrl(ENDPOINTS.orders(userId)), {
             headers: { 'ngrok-skip-browser-warning': 'true' }
           }),
-          fetch('https://api.codingboss.in/gobi360/shops/', {
+          fetch(apiUrl(ENDPOINTS.shops), {
             headers: { 'ngrok-skip-browser-warning': 'true' }
           }),
-          fetch('https://api.codingboss.in/gobi360/products/', {
+          fetch(apiUrl(ENDPOINTS.products), {
             headers: { 'ngrok-skip-browser-warning': 'true' }
           })
         ]);
@@ -244,7 +245,7 @@ const YourOrders = ({ onBack, onViewOrder, showToast }) => {
       const storedUser = localStorage.getItem('user');
       const userId = storedUser ? JSON.parse(storedUser).id || JSON.parse(storedUser).user_id || null : null;
 
-      const res = await fetch('https://api.codingboss.in/gobi360/order/cancel/', {
+      const res = await fetch(apiUrl(ENDPOINTS.orderCancel), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -437,7 +438,7 @@ const OrderDetails = ({ orderId, onBack }) => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const res = await fetch(`https://api.codingboss.in/gobi360/order/${orderId}/`, {
+        const res = await fetch(apiUrl(ENDPOINTS.order(orderId)), {
           headers: { 'ngrok-skip-browser-warning': 'true' }
         });
         const data = await res.json();

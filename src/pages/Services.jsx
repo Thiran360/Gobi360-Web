@@ -5,7 +5,8 @@ import { ChevronRight, Search, Star, Zap, ShieldCheck, ArrowRight, Bot, Shield, 
 import { services } from '../data/servicesData';
 import { useLanguage } from '../context/LanguageContext';
 import aiBot from '../assets/ai_bot_no_text.png';
-import { ENDPOINTS, apiJson } from '../lib/api';
+import { ENDPOINTS, apiJson, fetchFilteredProducts } from '../lib/api';
+import useDebounce from '../hooks/useDebounce';
 import { STATIC_EXPERTS_BY_CATEGORY, getCategoryLabel } from '../lib/expertCategoryMap';
 
 /* ─── Design tokens ─────────────────────────────── */
@@ -47,6 +48,8 @@ export default function Services() {
   const categoryId = searchParams.get('categoryId');
   const [hovered, setHovered] = useState(null);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const debouncedSearchQuery = useDebounce(searchQuery, 350);
+  const [apiFilteredProducts, setApiFilteredProducts] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isSm, setIsSm] = useState(window.innerWidth <= 425);
   const [apiData, setApiData] = useState(cachedApiData);
@@ -55,6 +58,36 @@ export default function Services() {
   const [expertCategories, setExpertCategories] = useState([]);
   const [userBills, setUserBills] = useState([]);
   const hasFetched = useRef(hasFetchedCache);
+
+  useEffect(() => {
+    if (!debouncedSearchQuery || !debouncedSearchQuery.trim()) {
+      setApiFilteredProducts([]);
+      return;
+    }
+    let isCancelled = false;
+    fetchFilteredProducts(debouncedSearchQuery).then(products => {
+      if (isCancelled || !Array.isArray(products)) return;
+      const mapped = products.map(p => ({
+        id: `api-cat-${p.product_category_id || p.category_id || p.category || 1}?shop=${p.shop_id || p.shop || 1}&product=${p.id}`,
+        company: p.product_name || p.name || 'Product',
+        companyTa: p.product_name_ta || p.name || 'Product',
+        desc: p.shop_name ? `🏪 ${p.shop_name} · ${p.description || p.product_category_name || ''}` : (p.description || p.product_category_name || (p.price ? `₹${p.price}` : 'Product Item')),
+        descTa: p.description_ta || '',
+        person: p.shop_name || p.vendor || '',
+        shopName: p.shop_name || p.vendor || '',
+        image: p.product_image || p.image || p.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500',
+        accent: '#10b981',
+        tag: 'PRODUCT',
+        tagTa: 'பொருள்',
+        isApiProduct: true
+      }));
+      setApiFilteredProducts(mapped);
+    }).catch(() => {});
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [debouncedSearchQuery]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -99,8 +132,8 @@ export default function Services() {
 
   useEffect(() => {
     const expertUrl = categoryId
-      ? `https://api.codingboss.in/gobi360/expert-categories/${categoryId}/experts/`
-      : 'https://api.codingboss.in/gobi360/experts/';
+      ? apiUrl(`/expert-categories/${categoryId}/experts/`)
+      : apiUrl(ENDPOINTS.experts);
 
     fetch(expertUrl, {
       headers: {
@@ -131,7 +164,7 @@ export default function Services() {
       })
       .catch(err => console.error(err));
 
-    fetch('https://api.codingboss.in/gobi360/expert-categories/', {
+    fetch(apiUrl(ENDPOINTS.expertCategories), {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
@@ -144,8 +177,8 @@ export default function Services() {
     if (!hasFetchedCache) {
       hasFetchedCache = true;
       Promise.all([
-        fetch('https://api.codingboss.in/gobi360/categories/', { headers: { 'ngrok-skip-browser-warning': 'true' } }).then(res => res.json()),
-        fetch('https://api.codingboss.in/gobi360/shops/', { headers: { 'ngrok-skip-browser-warning': 'true' } }).then(res => res.json())
+        fetch(apiUrl(ENDPOINTS.categories), { headers: { 'ngrok-skip-browser-warning': 'true' } }).then(res => res.json()),
+        fetch(apiUrl(ENDPOINTS.shops), { headers: { 'ngrok-skip-browser-warning': 'true' } }).then(res => res.json())
       ])
         .then(([catsData, shopsData]) => {
           const c = Array.isArray(catsData) ? catsData : catsData.results || [];
@@ -375,21 +408,10 @@ export default function Services() {
 
   const activeExpertCategory = expertCategories.find(c => String(c.id) === String(categoryId));
 
-  // If a category is selected, only show experts for that category.
-  const mergedServices = categoryId ? [...apiServices] : [...services, ...apiServices, ...mappedApiShops, ...mappedCategories];
-
-  const filteredServices = mergedServices.filter(s => {
-    const query = searchQuery.toLowerCase();
-    const nameEn = s.company?.toLowerCase() || '';
-    const nameTa = s.companyTa?.toLowerCase() || '';
-    const descEn = s.desc?.toLowerCase() || '';
-    const descTa = s.descTa?.toLowerCase() || '';
-    const tagEn = s.tag?.toLowerCase() || '';
-    const tagTa = s.tagTa?.toLowerCase() || '';
-    return nameEn.includes(query) || nameTa.includes(query) ||
-      descEn.includes(query) || descTa.includes(query) ||
-      tagEn.includes(query) || tagTa.includes(query);
-  });
+  // Rely strictly on server-side search filter results when searchQuery is provided
+  const filteredServices = searchQuery
+    ? apiFilteredProducts
+    : (categoryId ? [...apiServices] : [...services, ...apiServices, ...mappedApiShops, ...mappedCategories]);
 
   return (
     <main style={{ background: T.bg, minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>

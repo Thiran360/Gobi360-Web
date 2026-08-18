@@ -111,7 +111,7 @@ export default function ExpertDashboard() {
   // Fetch shop image
   useEffect(() => {
     if (!ownerShopName) return;
-    fetch('https://api.codingboss.in/gobi360/shops/', {
+    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/shops/', {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(r => r.json())
@@ -125,7 +125,7 @@ export default function ExpertDashboard() {
 
   // Fetch products + orders
   useEffect(() => {
-    fetch('https://api.codingboss.in/gobi360/products/', {
+    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/products/', {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(r => r.json())
@@ -136,7 +136,7 @@ export default function ExpertDashboard() {
       const shopId = user?.id || 1;
       // Fetch expert services for the dropdown using expert_id, fallback to user.id
       const expertId = user?.expert_id || user?.id || 4;
-      fetch(`https://api.codingboss.in/gobi360/experts/${expertId}/services/`, {
+      fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/experts/${expertId}/services/`, {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       })
         .then(r => r.json())

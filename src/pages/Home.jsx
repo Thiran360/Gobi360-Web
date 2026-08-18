@@ -7,6 +7,7 @@ import {
   Clock, MapPin, Users, TrendingUp, Play, Calendar, FileText,
 } from 'lucide-react';
 import { services as allServices } from '../data/servicesData';
+import { apiUrl, ENDPOINTS } from '../lib/api';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import plumberImg from '../assets/plumber_hero.png';
 import acImg from '../assets/ac_service.png';
@@ -240,7 +241,7 @@ export default function Home() {
     }
     setSelectedCategoryId(catId);
     setIsCategoryLoading(true);
-    fetch(`https://api.codingboss.in/gobi360/expert-categories/${catId}/experts/`, {
+    fetch(apiUrl(`/expert-categories/${catId}/experts/`), {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(res => res.json())
@@ -296,7 +297,7 @@ export default function Home() {
     if (hasFetched.current) return;
     hasFetched.current = true;
 
-    fetch('https://api.codingboss.in/gobi360/experts/', {
+    fetch(apiUrl(ENDPOINTS.experts), {
       headers: {
         'ngrok-skip-browser-warning': 'true'
       }
@@ -305,7 +306,7 @@ export default function Home() {
       .then(data => setApiData(Array.isArray(data) ? data : data.results || []))
       .catch(err => console.error(err));
 
-    fetch('https://api.codingboss.in/gobi360/categories/', {
+    fetch(apiUrl(ENDPOINTS.categories), {
       headers: {
         'ngrok-skip-browser-warning': 'true'
       }
@@ -314,7 +315,7 @@ export default function Home() {
       .then(data => setApiCategories(Array.isArray(data) ? data : data.results || []))
       .catch(err => console.error(err));
 
-    fetch('https://api.codingboss.in/gobi360/expert-categories/', {
+    fetch(apiUrl(ENDPOINTS.expertCategories), {
       headers: {
         'ngrok-skip-browser-warning': 'true'
       }
@@ -323,7 +324,7 @@ export default function Home() {
       .then(data => setExpertCategories(Array.isArray(data) ? data : data.results || []))
       .catch(err => console.error(err));
 
-    fetch('https://api.codingboss.in/gobi360/shops/', {
+    fetch(apiUrl(ENDPOINTS.shops), {
       headers: {
         'ngrok-skip-browser-warning': 'true'
       }
@@ -332,7 +333,7 @@ export default function Home() {
       .then(data => setEcomCategories(Array.isArray(data) ? data : data.results || []))
       .catch(err => console.error(err));
 
-    fetch('https://api.codingboss.in/gobi360/product-categories/', {
+    fetch(apiUrl(ENDPOINTS.productCategories), {
       headers: {
         'ngrok-skip-browser-warning': 'true'
       }
@@ -341,7 +342,7 @@ export default function Home() {
       .then(data => setProductCategories(Array.isArray(data) ? data : data.results || []))
       .catch(err => console.error(err));
 
-    fetch('https://api.codingboss.in/gobi360/products/', {
+    fetch(apiUrl(ENDPOINTS.products), {
       headers: {
         'ngrok-skip-browser-warning': 'true'
       }
@@ -350,7 +351,7 @@ export default function Home() {
       .then(data => setProducts(Array.isArray(data) ? data : data.results || []))
       .catch(err => console.error(err));
 
-    fetch('https://api.codingboss.in/gobi360/product-variations/', {
+    fetch(apiUrl(ENDPOINTS.productVariations), {
       headers: {
         'ngrok-skip-browser-warning': 'true'
       }

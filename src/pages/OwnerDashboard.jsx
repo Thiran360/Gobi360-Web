@@ -96,7 +96,7 @@ export default function OwnerDashboard() {
   // Fetch shop image
   useEffect(() => {
     if (!ownerShopName) return;
-    fetch('https://api.codingboss.in/gobi360/shops/', {
+    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/shops/', {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(r => r.json())
@@ -113,7 +113,7 @@ export default function OwnerDashboard() {
 
   // Fetch products + orders
   useEffect(() => {
-    fetch('https://api.codingboss.in/gobi360/products/', {
+    fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/products/', {
       headers: { 'ngrok-skip-browser-warning': 'true' }
     })
       .then(r => r.json())
@@ -123,7 +123,7 @@ export default function OwnerDashboard() {
     if (role === 'owner') {
       if (user?.id) {
         const fetchOrders = () => {
-          fetch(`https://api.codingboss.in/gobi360/shopkeeper-orders/${user.id}/`, {
+          fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/shopkeeper-orders/${user.id}/`, {
             headers: { 'ngrok-skip-browser-warning': 'true' }
           })
             .then(r => r.json())
@@ -140,7 +140,7 @@ export default function OwnerDashboard() {
         const ordersInterval = setInterval(fetchOrders, 5000);
 
         // Fetch Reward Settings only if user has a real ID
-        fetch(`https://api.codingboss.in/gobi360/shopkeeper/reward-setting/${user.id}/`, {
+        fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/shopkeeper/reward-setting/${user.id}/`, {
           headers: { 'ngrok-skip-browser-warning': 'true' }
         })
           .then(r => r.json())
@@ -252,7 +252,7 @@ export default function OwnerDashboard() {
     const statuses = ['out_for_delivery', 'assigned', 'delivery', 'ready_for_pickup'];
     for (const st of statuses) {
       try {
-        const res = await fetch(`https://api.codingboss.in/gobi360/shopkeeper/order-status/${order.rawId}/`, {
+        const res = await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/shopkeeper/order-status/${order.rawId}/`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
           body: JSON.stringify({
@@ -280,7 +280,7 @@ export default function OwnerDashboard() {
     if (order.status === 'delivered' || order.status === 'Delivered') return;
 
     try {
-      const res = await fetch(`https://api.codingboss.in/gobi360/shopkeeper/order-status/${order.rawId}/`, {
+      const res = await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/shopkeeper/order-status/${order.rawId}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -306,7 +306,7 @@ export default function OwnerDashboard() {
     // Refresh from backend
     if (user?.id) {
       try {
-        const orderRes = await fetch(`https://api.codingboss.in/gobi360/shopkeeper-orders/${user.id}/`, {
+        const orderRes = await fetch(`https://80db-103-175-108-243.ngrok-free.app/gobi360/shopkeeper-orders/${user.id}/`, {
           headers: { 'ngrok-skip-browser-warning': 'true' }
         });
         const orderData = await orderRes.json();
@@ -343,11 +343,11 @@ export default function OwnerDashboard() {
       };
 
       const shopId = user?.id || 1;
-      let url = `https://api.codingboss.in/gobi360/shopkeeper/reward-setting/${shopId}/`;
+      let url = `https://80db-103-175-108-243.ngrok-free.app/gobi360/shopkeeper/reward-setting/${shopId}/`;
       let method = 'POST';
 
       if (hasExistingSettings) {
-        url = `https://api.codingboss.in/gobi360/shopkeeper/reward-setting/update/${shopId}/`;
+        url = `https://80db-103-175-108-243.ngrok-free.app/gobi360/shopkeeper/reward-setting/update/${shopId}/`;
         method = 'PUT';
       }
 
@@ -363,7 +363,7 @@ export default function OwnerDashboard() {
       // Bulletproof fallback: If we thought it didn't exist but the backend says 400 (already exists),
       // we immediately fall back to the PUT update endpoint.
       if (!response.ok && method === 'POST') {
-        url = `https://api.codingboss.in/gobi360/shopkeeper/reward-setting/update/${shopId}/`;
+        url = `https://80db-103-175-108-243.ngrok-free.app/gobi360/shopkeeper/reward-setting/update/${shopId}/`;
         response = await fetch(url, {
           method: 'PUT',
           headers: {

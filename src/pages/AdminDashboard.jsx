@@ -29,7 +29,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const fetchCalls = () => {
-      fetch('https://api.codingboss.in/gobi360/call-request-list/', {
+      fetch('https://80db-103-175-108-243.ngrok-free.app/gobi360/call-request-list/', {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       })
         .then(res => res.json())
